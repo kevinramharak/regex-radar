@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/vscode-extension",
+            "args": ["--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension"],
+            "outFiles": ["${workspaceFolder}/apps/vscode-extension/dist/**/*.js"]
+        },
+        {
+            "name": "Run Extension (all extensions disabled)",
+            "type": "extensionHost",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/vscode-extension",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension"
+            ],
+            "outFiles": ["${workspaceFolder}/apps/vscode-extension/dist/**/*.js"]
+        },
+        {
+            "name": "Extension Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/vscode-extension",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
+                "--extensionTestsPath=${workspaceFolder}/apps/vscode-extension/out/test/suite/index"
+            ],
+            "outFiles": ["${workspaceFolder}/apps/vscode-extension/out/**/*.js"]
+        }
+    ]
+}

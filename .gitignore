@@ -1,0 +1,9 @@
+
+# build intermediate files
+.turbo
+
+# dependencies
+node_modules
+
+# build output files
+dist

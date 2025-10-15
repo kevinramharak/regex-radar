@@ -5,11 +5,6 @@ import {
     TextDocumentSyncKind,
     InitializeResult,
     ClientCapabilities,
-    RequestType,
-    ShowMessageParams,
-    ShowMessageRequestParams,
-    MessageType,
-    ShowMessageRequest,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
@@ -26,6 +21,12 @@ connection.onInitialize((params) => {
     const result: InitializeResult = {
         capabilities: {
             textDocumentSync: TextDocumentSyncKind.Incremental,
+            diagnosticProvider: {
+                identifier: "Regex Radar",
+                documentSelector: [{ language: "typescript" }],
+                interFileDependencies: false,
+                workspaceDiagnostics: false,
+            },
         },
         serverInfo: {
             name: packageJson.name,
@@ -44,9 +45,7 @@ connection.onInitialize((params) => {
 
 connection.onInitialized(() => {});
 
-documents.onDidChangeContent((e) => {
-    connection.window.showInformationMessage(e.document.uri);
-});
+documents.onDidChangeContent((e) => {});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { EntryType } from ".";
+import { EntryType } from "./EntryType";
 
 export type FileEntry = vscode.TreeItem & {
     type: EntryType.File;

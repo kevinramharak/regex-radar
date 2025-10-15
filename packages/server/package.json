@@ -1,0 +1,26 @@
+{
+    "name": "@regex-radar/server",
+    "private": true,
+    "displayName": "Regex Radar Language Server",
+    "publisher": "Kevin Ramharak",
+    "description": "The Language Server for Regex Radar",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kevinramharak/regex-radar",
+        "directory": "packages/server"
+    },
+    "homepage": "https://github.com/kevinramharak/regex-radar",
+    "scripts": {
+        "build": "node scripts/build.js",
+        "dev": "node scripts/build.js --watch",
+        "package": "node scripts/build.js --production"
+    },
+    "dependencies": {
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.11"
+    }
+}

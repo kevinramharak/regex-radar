@@ -1,0 +1,8 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "target": "es2024",
+        "resolveJsonModule": true
+    },
+    "include": ["src/**/*.ts", "test/**/*.ts"]
+}

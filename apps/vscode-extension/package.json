@@ -1,8 +1,9 @@
 {
     "name": "regex-radar",
+    "private": true,
     "displayName": "Regex Radar",
     "publisher": "Kevin Ramharak",
-    "description": "A Regex Intelligence Tooling extension",
+    "description": "The Regex Radar extension for vscode",
     "version": "0.1.0",
     "icon": "assets/icon.png",
     "repository": {
@@ -43,14 +44,16 @@
         "LICENSE"
     ],
     "scripts": {
-        "build": "vite build --mode development",
-        "dev": "vite build --mode development --watch",
-        "package": "vite build --mode production"
+        "build": "node scripts/build.js",
+        "dev": "node scripts/build.js --watch",
+        "package": "node scripts/build.js --production"
     },
     "devDependencies": {
         "@types/node": "^22.18.10",
         "@types/vscode": "^1.105.0",
-        "vite": "^7.1.9",
-        "vitest": "^3.2.4"
+        "esbuild": "^0.25.11"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.1"
     }
 }

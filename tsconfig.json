@@ -2,5 +2,10 @@
     "$schema": "https://json.schemastore.org/tsconfig",
     "extends": "./tsconfig.base.json",
     "files": [],
-    "references": [{ "path": "apps/vscode-extension" }]
+    "references": [
+        { "path": "apps/vscode-extension" },
+        {
+            "path": "packages/server"
+        }
+    ]
 }

@@ -1,9 +1,13 @@
 import * as vscode from "vscode";
+
 import { EntryType } from "./EntryType";
 import { createWorkspaceEntry, WorkspaceEntry } from "./workspace-entry";
 import { createDirectoryEntry, DirectoryEntry } from "./directory-entry";
 import { createFileEntry, FileEntry } from "./file-entry";
 import { createRegexEntry, RegexEntry } from "./regex-entry";
+
+import * as logger from "../logger";
+import { RegexRadarLanguageClient } from "../client";
 
 export type Element = WorkspaceEntry | DirectoryEntry | FileEntry | RegexEntry;
 
@@ -11,7 +15,10 @@ export type Element = WorkspaceEntry | DirectoryEntry | FileEntry | RegexEntry;
  * @see https://code.visualstudio.com/api/extension-guides/tree-view
  */
 export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Element> {
-    constructor(private readonly workspaceFolders: readonly vscode.WorkspaceFolder[]) {}
+    constructor(
+        private readonly client: RegexRadarLanguageClient,
+        private readonly workspaceFolders: readonly vscode.WorkspaceFolder[]
+    ) {}
 
     getTreeItem(element: Element): Element {
         return element;
@@ -21,36 +28,37 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Eleme
         if (!element) {
             return this.getRoot();
         }
+        const uri = element.resourceUri;
+        if (!uri) {
+            return [];
+        }
+
         switch (element.type) {
             case EntryType.Workspace:
-            case EntryType.Directory: {
-                // TODO: use vscode.fs API or move this to language server?
-                const entries = await vscode.workspace.fs.readDirectory(element.resourceUri);
-                return entries
-                    .map(([name, type]) => {
-                        const uri = vscode.Uri.joinPath(element.resourceUri, name);
-                        switch (type) {
-                            case vscode.FileType.File: {
-                                return createFileEntry(uri);
-                            }
-                            case vscode.FileType.Directory: {
-                                return createDirectoryEntry(uri);
-                            }
-                            default: {
-                                return null;
-                            }
-                        }
-                    })
-                    .filter((element) => element != null);
-            }
+            case EntryType.Directory:
             case EntryType.File: {
-                const uri = element.resourceUri;
-                // ask LS what regexes can be found in file.
-            }
-            default: {
-                return Promise.resolve([]);
+                const response: any = await this.client.getTreeViewChildren(uri, element.type);
+                return response.children.map((entry: any) => {
+                    const uri = vscode.Uri.parse(entry.uri);
+                    switch (entry.type) {
+                        case EntryType.Workspace: {
+                            return createWorkspaceEntry(uri);
+                        }
+                        case EntryType.Directory: {
+                            return createDirectoryEntry(uri);
+                        }
+                        case EntryType.File: {
+                            return createFileEntry(uri);
+                        }
+                        case EntryType.Regex: {
+                            return createRegexEntry(`/${entry.pattern}/${entry.flags}`, uri);
+                        }
+                    }
+                });
             }
         }
+
+        return [];
     }
 
     async getRoot(): Promise<Element[]> {

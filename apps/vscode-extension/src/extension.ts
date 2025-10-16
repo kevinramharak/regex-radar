@@ -7,8 +7,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(logger);
     logger.info("activating");
 
-    registerTreeView(context);
-    registerLanguageClient(context);
+    const client = registerLanguageClient(context);
+    registerTreeView(client, context);
 }
 
 export function deactivate() {

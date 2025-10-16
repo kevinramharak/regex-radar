@@ -17,8 +17,10 @@
         "package": "node scripts/build.js --production"
     },
     "dependencies": {
+        "oxc-parser": "^0.95.0",
         "vscode-languageserver": "^9.0.1",
-        "vscode-languageserver-textdocument": "^1.0.12"
+        "vscode-languageserver-textdocument": "^1.0.12",
+        "vscode-uri": "^3.1.0"
     },
     "devDependencies": {
         "esbuild": "^0.25.11"

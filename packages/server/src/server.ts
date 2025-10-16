@@ -4,28 +4,33 @@ import {
     ProposedFeatures,
     TextDocumentSyncKind,
     InitializeResult,
-    ClientCapabilities,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 import packageJson from "../package.json";
+import { registerDiagnosticsHandlers } from "./diagnostics";
+import { registerDocumentsHandlers } from "./documents";
+import { registerTreeViewHandlers } from "./tree-view";
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 
-let capabilities: Partial<ClientCapabilities> = {};
-
 connection.onInitialize((params) => {
-    capabilities = params.capabilities;
+    const capabilities = params.capabilities;
 
     const result: InitializeResult = {
         capabilities: {
-            textDocumentSync: TextDocumentSyncKind.Incremental,
+            textDocumentSync: {
+                change: TextDocumentSyncKind.Incremental,
+                openClose: true,
+                save: true,
+                willSave: true,
+            },
             diagnosticProvider: {
                 identifier: "Regex Radar",
-                documentSelector: [{ language: "typescript" }],
+                documentSelector: [{ language: "typescript" }, { language: "javascript" }],
                 interFileDependencies: false,
-                workspaceDiagnostics: false,
+                workspaceDiagnostics: true,
             },
         },
         serverInfo: {
@@ -43,13 +48,11 @@ connection.onInitialize((params) => {
     return result;
 });
 
-connection.onInitialized(() => {});
+// VSCode API
+registerDocumentsHandlers(connection, documents);
+registerDiagnosticsHandlers(connection);
 
-documents.onDidChangeContent((e) => {});
+// Custom Requests
+registerTreeViewHandlers(connection, documents);
 
-// Make the text document manager listen on the connection
-// for open, change and close text document events
-documents.listen(connection);
-
-// Listen on the connection
 connection.listen();

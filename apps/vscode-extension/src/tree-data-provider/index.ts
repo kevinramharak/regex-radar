@@ -1,10 +1,14 @@
 import * as vscode from "vscode";
 import { Element, RegexRadarTreeDataProvider } from "./RegexRadarTreeDataProvider";
+import { RegexRadarLanguageClient } from "../client";
 
-export function registerTreeView(context: vscode.ExtensionContext): vscode.TreeView<Element> {
+export function registerTreeView(
+    client: RegexRadarLanguageClient,
+    context: vscode.ExtensionContext
+): vscode.TreeView<Element> {
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
     const treeView = vscode.window.createTreeView("regex-radar", {
-        treeDataProvider: new RegexRadarTreeDataProvider(workspaceFolders),
+        treeDataProvider: new RegexRadarTreeDataProvider(client, workspaceFolders),
         showCollapseAll: true,
     });
     context.subscriptions.push(treeView);

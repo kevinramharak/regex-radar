@@ -7,7 +7,7 @@ function logger(): LogOutputChannel {
     if (instance !== null) {
         return instance;
     }
-    instance = window.createOutputChannel(displayName, { log: true });
+    instance = window.createOutputChannel(`${displayName} (client)`, { log: true });
     return instance;
 }
 

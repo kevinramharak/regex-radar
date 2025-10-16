@@ -3,17 +3,16 @@ import { EntryType } from "./EntryType";
 
 export type RegexEntry = vscode.TreeItem & {
     type: EntryType.Regex;
-    name: string;
 };
 
 const regexIcon = new vscode.ThemeIcon("regex");
 
-export function createRegexEntry(name: string): RegexEntry {
+export function createRegexEntry(label: string, uri: vscode.Uri): RegexEntry {
     return {
         type: EntryType.Regex,
-        name,
-        label: name,
-        collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+        label,
+        collapsibleState: vscode.TreeItemCollapsibleState.None,
         iconPath: regexIcon,
+        resourceUri: uri,
     };
 }

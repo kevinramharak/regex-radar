@@ -25,7 +25,7 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "regex-radar__view-container",
+                    "id": "regex-radar__regex-explorer",
                     "title": "Regex Explorer",
                     "icon": "$(regex)"
                 }

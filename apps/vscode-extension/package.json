@@ -45,7 +45,8 @@
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
         "package": "node scripts/build.js --production",
-        "tsc": "tsc -p ."
+        "tsc": "tsc -p .",
+        "clean": "rm -r dist/"
     },
     "devDependencies": {
         "@types/node": "^22.18.10",

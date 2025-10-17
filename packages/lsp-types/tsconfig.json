@@ -2,7 +2,9 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "target": "es2024",
-        "outDir": "dist"
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+        "outDir": "dist",
+        "rootDir": "src"
     },
     "include": ["src/**/*.ts", "test/**/*.ts", "package.json"]
 }

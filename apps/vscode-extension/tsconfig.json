@@ -4,12 +4,20 @@
         "moduleResolution": "node10",
         "target": "es2024",
         "resolveJsonModule": true,
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
         "outDir": "dist",
-        "paths": {
-            "@regex-radar/client": ["../../packages/client/src"],
-            "@regex-radar/server": ["../../packages/server/src"],
-            "@regex-radar/lsp-types": ["../../packages/lsp-types/src"]
-        }
+        "rootDir": "src"
     },
-    "include": ["src/**/*.ts", "test/**/*.ts", "package.json"]
+    "include": ["src/**/*.ts", "test/**/*.ts", "package.json"],
+    "references": [
+        {
+            "path": "../../packages/lsp-types"
+        },
+        {
+            "path": "../../packages/client"
+        },
+        {
+            "path": "../../packages/server"
+        }
+    ]
 }

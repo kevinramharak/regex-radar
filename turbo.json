@@ -12,6 +12,9 @@
         },
         "tsc": {
             "cache": false
+        },
+        "clean": {
+            "cache": false
         }
     }
 }

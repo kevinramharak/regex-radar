@@ -3,11 +3,10 @@
     "compilerOptions": {
         "target": "es2024",
         "resolveJsonModule": true,
-        "outDir": "dist"
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+        "outDir": "dist",
+        "rootDir": "src"
     },
     "include": ["src/**/*.ts", "test/**/*.ts", "package.json"],
-    "paths": {
-        "@regex-radar/server": ["../server/src"],
-        "@regex-radar/lsp-types": ["../lsp-types/src"]
-    }
+    "references": [{ "path": "../lsp-types" }]
 }

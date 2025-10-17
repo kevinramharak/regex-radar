@@ -9,7 +9,7 @@ const watch = process.argv.includes("--watch");
 
 async function main() {
     const ctx = await context({
-        entryPoints: ["src/server.ts"],
+        entryPoints: ["src/index.ts"],
         bundle: true,
         format: "cjs",
         minify: production,

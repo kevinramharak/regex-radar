@@ -25,6 +25,7 @@ export class DiscoveryService implements IDiscoveryService, Disposable {
         this.disposables.push(
             connection.onRequest(
                 "regexRadar/discovery",
+                // TODO: refactor this to a class / service
                 async ({ uri, hint }: DiscoveryParams): Promise<Entry | null> => {
                     if (isUriIgnored(uri)) {
                         return null;

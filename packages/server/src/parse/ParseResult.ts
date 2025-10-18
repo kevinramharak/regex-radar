@@ -7,7 +7,7 @@ export interface ParseResult {
 
 /**
  * The idea is to keep a representation of the AST Node that is easy to work with in vscode
- * while also keeping access to the node that the used parser spit out
+ * while also keeping access to the node that the parser spit out
  */
 interface AstNode<Node = unknown> {
     range: Range;

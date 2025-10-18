@@ -2,8 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 
 import { URI } from "vscode-uri";
-import { TextDocuments, URI as Uri, Location } from "vscode-languageserver";
-import { TextDocument } from "vscode-languageserver-textdocument";
+import { URI as Uri, Location } from "vscode-languageserver";
 
 import {
     Entry,

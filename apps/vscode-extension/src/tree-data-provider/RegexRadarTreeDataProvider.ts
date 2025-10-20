@@ -10,9 +10,6 @@ import {
 import { RegexRadarLanguageClient } from "@regex-radar/client";
 import * as logger from "../logger";
 
-// TODO: maybe `parentLookup`, where `Map<Child, Parent>` ?
-const lookup = new Map<string, Exclude<Entry, WorkspaceEntry | RegexEntry>>();
-
 type OnDidChangeTreeDataEventParams = Entry | undefined | null | void;
 
 /**
@@ -23,8 +20,10 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
     readonly onDidChangeTreeData: vscode.Event<OnDidChangeTreeDataEventParams> =
         this._onDidChangeTreeData.event;
 
+    private entries = new Map<string, Exclude<Entry, RegexEntry>>();
+
     refresh(): void {
-        lookup.clear();
+        this.entries.clear();
         // TODO: signal to Language Server to clear cache?
         this._onDidChangeTreeData.fire();
     }
@@ -32,7 +31,14 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
     constructor(
         private readonly client: RegexRadarLanguageClient,
         private readonly workspaceFolders: readonly vscode.WorkspaceFolder[]
-    ) {}
+    ) {
+        // TODO: move to method on RegexRadarLanguageClient
+        client.onNotification("regexRadar/discovery/didChange", ({ uri }: { uri: string }) => {
+            const entry = this.entries.get(uri);
+            this.entries.delete(uri);
+            this._onDidChangeTreeData.fire(entry);
+        });
+    }
 
     getParent(entry: Entry): vscode.ProviderResult<Entry> {
         switch (entry.type) {
@@ -44,39 +50,38 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
                 if (!entry.parentUri) {
                     return;
                 }
-                return lookup.get(entry.parentUri);
+                return this.entries.get(entry.parentUri);
             }
             case EntryType.Regex: {
-                return lookup.get(entry.location.uri);
+                return this.entries.get(entry.location.uri);
             }
         }
     }
 
     getTreeItem(entry: Entry): vscode.TreeItem {
-        switch (entry.type) {
-            case EntryType.Directory:
-            case EntryType.File: {
-                if (entry.parentUri) {
-                    lookup.set(entry.uri, entry);
-                }
-                break;
-            }
-        }
         return createTreeItem(entry);
     }
 
     async getChildren(entry?: Entry): Promise<Entry[]> {
         if (!entry) {
-            return this.getRoot();
+            const root = (await this.getRoot()) as Exclude<Entry, RegexEntry>[];
+            root.forEach((entry) => this.entries.set(entry.uri, entry));
+            return root;
         }
         if (entry.type === EntryType.Regex) {
             return [];
         }
-        const serverEntry = await this.client.discovery(entry.uri, entry.type);
-        if (serverEntry === null || serverEntry.type === EntryType.Regex) {
-            return [];
+        const serverEntry = await this.client.discovery({ uri: entry.uri, hint: entry.type });
+        switch (serverEntry?.type) {
+            case EntryType.Workspace:
+            case EntryType.Directory:
+            case EntryType.File: {
+                this.entries.set(serverEntry.uri, serverEntry);
+                return serverEntry.children;
+            }
+            default:
+                return [];
         }
-        return serverEntry.children;
     }
 
     async getRoot(): Promise<Entry[]> {

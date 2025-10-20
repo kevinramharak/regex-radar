@@ -37,6 +37,11 @@ function createLanguageClient(context: vscode.ExtensionContext): RegexRadarLangu
         },
     };
 
-    const clientOptions: LanguageClientOptions = {};
+    const clientOptions: LanguageClientOptions = {
+        documentSelector: [{ language: "javascript" }, { language: "typescript" }],
+        synchronize: {
+            fileEvents: vscode.workspace.createFileSystemWatcher(""),
+        },
+    };
     return new RegexRadarLanguageClient(serverOptions, clientOptions);
 }

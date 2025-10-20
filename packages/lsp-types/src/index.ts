@@ -1,5 +1,12 @@
 import * as lsp from "vscode-languageserver-types";
 
+export type DiscoveryParams = {
+    uri: lsp.URI;
+    hint?: EntryType;
+};
+
+export type DiscoveryResult = Entry | null;
+
 export enum EntryType {
     Unknown,
     Workspace,

@@ -9,6 +9,9 @@ type RegexNode = RegExpLiteral | NewExpression | CallExpression;
 
 function findRegexes(program: Program): RegexNode[] {
     const nodes: RegexNode[] = [];
+    /**
+     * Use https://stackblitz.com/edit/oxc-parser as a playground/sketchpad
+     */
     const visitor = new Visitor({
         Literal: (node) => {
             if ("regex" in node) {

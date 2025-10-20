@@ -1,5 +1,28 @@
 # Regex Radar
 
+## tasks
+
+- [ ] file watchers
+- [ ] detect implicit regexes
+- [ ] comment directive support
+- [ ] visualization (hover + webview?)
+- [ ] example matching (seperate file, temp file, clipboard)
+- [ ] complexity
+- [ ] code actions (simplify, convert literal/constructor)
+- [ ] diagnostics (warnings, hints, tips)
+- [ ] more languages
+- [ ] redos / benchmark
+- [ ] Test utilities
+
+## inspiration
+
+- https://marketplace.visualstudio.com/items?itemName=baumundzwanzig.vscode-regex-tester
+- https://marketplace.visualstudio.com/items?itemName=pedrohenrique-ql.regex-match
+- https://marketplace.visualstudio.com/items?itemName=Kundros.regexer-extension
+- https://marketplace.visualstudio.com/items?itemName=StevenCyb.vsregex
+- https://marketplace.visualstudio.com/items?itemName=nodeGarden.randexp
+- https://github.com/babobski/JS-Regex-Tester
+
 ## ⚙️ Core Concept
 
 A Regex Intelligence Tooling extension — a VS Code + Language Server combo that:

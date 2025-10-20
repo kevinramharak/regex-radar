@@ -15,7 +15,7 @@ export interface IServiceProvider {
     createScope: _ServiceProvider["createScope"];
 }
 
-const IServiceProvider = createInterfaceId<IServiceProvider>("IServiceProvider");
+export const IServiceProvider = createInterfaceId<IServiceProvider>("IServiceProvider");
 
 @Injectable(IServiceProvider, [])
 export class ServiceProvider implements IServiceProvider, Disposable {

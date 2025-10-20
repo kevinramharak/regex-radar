@@ -17,7 +17,7 @@ import { parseJs } from "../parse/parseJs";
 import { ParseResult } from "../parse/ParseResult";
 import { IDocumentsService } from "../documents";
 
-const cache = new Map<Uri, Exclude<Entry, RegexEntry>>();
+export const cache = new Map<Uri, Exclude<Entry, RegexEntry>>();
 
 // TODO: implement this with some kind of .ignore configuration
 const ALWAYS_IGNORE = ["node_modules", ".git", ".github", ".turbo", ".vscode", ".vscode-test", "dist", "out"];

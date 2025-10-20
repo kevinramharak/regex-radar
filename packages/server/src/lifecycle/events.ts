@@ -1,12 +1,11 @@
-import { createInterfaceId } from "@gitlab/needle";
-import {
+import type {
+    RequestHandler,
     InitializeParams,
     InitializeResult,
-    InitializeError,
     InitializedParams,
-    RequestHandler,
-    NotificationHandler,
+    InitializeError,
 } from "vscode-languageserver";
+import { createInterfaceId } from "@gitlab/needle";
 
 export interface IOnInitialize {
     onInitialize: RequestHandler<InitializeParams, InitializeResult, InitializeError>;
@@ -15,7 +14,7 @@ export interface IOnInitialize {
 export const IOnInitialize = createInterfaceId<IOnInitialize>("IOnInitialize");
 
 export interface IOnInitialized {
-    onInitialized(params: InitializedParams): void;
+    onInitialized(params: InitializedParams): void | Promise<void>;
 }
 
 export const IOnInitialized = createInterfaceId<IOnInitialized>("IOnInitialized");

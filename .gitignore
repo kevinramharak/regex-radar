@@ -8,3 +8,4 @@ node_modules
 
 # build output files
 dist
+*.vsix

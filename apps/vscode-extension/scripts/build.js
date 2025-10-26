@@ -1,4 +1,5 @@
 // @ts-check
+import { writeFile } from "node:fs/promises";
 
 import { context } from "esbuild";
 import { sharedOptions } from "../../../esbuild/shared-options.js";
@@ -14,10 +15,22 @@ async function main() {
         platform: "node",
         external: ["vscode"],
     });
-    if (watch) {
-        await ctx.watch();
-    } else {
-        await ctx.rebuild();
+    try {
+        if (watch) {
+            await ctx.watch();
+        } else {
+            const result = await ctx.rebuild();
+            if (result.metafile) {
+                const metaFilePath = "dist/metafile.json";
+                await writeFile(metaFilePath, JSON.stringify(result.metafile, null, 2), {
+                    encoding: "utf-8",
+                });
+                console.log(
+                    `generated metafile at: ${metaFilePath}, use https://esbuild.github.io/analyze/ to analyze the bundle`
+                );
+            }
+        }
+    } finally {
         await ctx.dispose();
     }
 }

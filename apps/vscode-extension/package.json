@@ -1,8 +1,8 @@
 {
-    "name": "@regex-radar/vscode-extension",
+    "name": "regex-radar",
     "private": true,
     "displayName": "Regex Radar",
-    "publisher": "Kevin Ramharak",
+    "publisher": "kevinramharak",
     "description": "The Regex Radar extension for vscode",
     "version": "0.1.0",
     "type": "module",
@@ -139,11 +139,9 @@
             }
         ]
     },
-    "main": "./dist/extension.cjs",
-    "browser": "./dist/extension.browser.cjs",
-    "types": "./dist/extension.d.ts",
+    "main": "./dist/extension.min.cjs",
     "files": [
-        "dist/**/*",
+        "dist/extension.cjs",
         "assets/**/*",
         "LICENSE"
     ],
@@ -151,6 +149,7 @@
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
         "build:production": "node scripts/build.js --production",
+        "package": "vsce package",
         "tsc": "tsc -p .",
         "clean": "rm -r dist/"
     },

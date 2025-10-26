@@ -1,3 +1,5 @@
+![Logo](./assets/logo-wide.png)
+
 # Regex Radar
 
 ## tasks

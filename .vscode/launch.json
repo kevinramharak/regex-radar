@@ -1,7 +1,26 @@
 {
     "version": "0.2.0",
+    "compounds": [
+        {
+            "presentation": {
+                "order": 1
+            },
+            "name": "Run Extension & Attach to the Language Server",
+            "configurations": ["Run Extension", "Attach to the Language Server"]
+        },
+        {
+            "presentation": {
+                "order": 2
+            },
+            "name": "Run Extension (all extensions disabled) & Attach to the Language Server",
+            "configurations": ["Run Extension (all extensions disabled)", "Attach to the Language Server"]
+        }
+    ],
     "configurations": [
         {
+            "presentation": {
+                "hidden": true
+            },
             "name": "Run Extension",
             "type": "extensionHost",
             "request": "launch",
@@ -10,9 +29,14 @@
                 "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
                 "${workspaceFolder}/examples"
             ],
-            "outFiles": ["${workspaceFolder}/apps/vscode-extension/dist/**/*.js"]
+            // Enable this when (custom) webviews need to be availble through the debugger
+            // "debugWebviews": true,
+            "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         },
         {
+            "presentation": {
+                "hidden": true
+            },
             "name": "Run Extension (all extensions disabled)",
             "type": "extensionHost",
             "request": "launch",
@@ -22,7 +46,9 @@
                 "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
                 "${workspaceFolder}/examples"
             ],
-            "outFiles": ["${workspaceFolder}/apps/vscode-extension/dist/**/*.js"]
+            // Enable this when (custom) webviews need to be availble through the debugger
+            // "debugWebviews": true,
+            "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         },
         {
             "name": "Extension Tests",
@@ -33,7 +59,23 @@
                 "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
                 "--extensionTestsPath=${workspaceFolder}/apps/vscode-extension/out/test/suite/index"
             ],
-            "outFiles": ["${workspaceFolder}/apps/vscode-extension/out/**/*.js"]
+            // Enable this when (custom) webviews need to be availble through the debugger
+            // "debugWebviews": true,
+            "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
+        },
+        {
+            "presentation": {
+                "hidden": true
+            },
+            "name": "Attach to the Language Server",
+            "type": "node",
+            "request": "attach",
+            "port": 6009,
+            "restart": {
+                "delay": 1000,
+                "maxAttempts": 10
+            },
+            "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         }
     ]
 }

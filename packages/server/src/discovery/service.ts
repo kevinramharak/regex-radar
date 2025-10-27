@@ -17,13 +17,14 @@ import {
     type RegexEntry,
     type WorkspaceEntry,
 } from "@regex-radar/lsp-types";
+import type { RegexMatch } from "@regex-radar/parsers";
 
 import { IRequestMessageHandler } from "../message-handler";
 import { LsConnection } from "../di/external-interfaces";
 import { IDocumentsService } from "../documents";
 import { IOnTextDocumentDidChangeHandler, IOnTextDocumentDidCloseHandler } from "../documents/events";
 import { ILogger } from "../logger";
-import { IParserProvider, type ParseResult, type RegexMatch } from "../parsers";
+import { IParserProvider } from "../parsers";
 
 interface IDiscoveryService {
     discover(uri: DiscoveryParams): Promise<DiscoveryResult>;
@@ -111,6 +112,9 @@ export class DiscoveryService
     }
 
     async discover({ uri, hint }: DiscoveryParams): Promise<DiscoveryResult> {
+        this.logger.debug(
+            `(discovery) request for ${uri} with hint: ${hint ? EntryType[hint] : "<no hint>"}`
+        );
         if (this.isUriIgnored(uri)) {
             this.logger.debug(`(discovery) ignored discovery request for: ${uri}`);
             return null;

@@ -102,10 +102,7 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
         if (vscode.workspace.workspaceFolders) {
             return vscode.workspace.workspaceFolders.map((workspaceFolder) => workspaceFolder.uri.toString());
         }
-        // fallback on deprecated `rootPath`
-        if (vscode.workspace.rootPath) {
-            return [vscode.workspace.rootPath];
-        }
+        logger.warn("missing vsode.workspace.workspaceFolders");
         return [];
     }
 }

@@ -1,0 +1,1 @@
+{"cells":[{"code":"// example to test with\r\n// note that the tree sitter grammar does not care about the validity of the flags\r\nconst regex = /pattern/flags;\r\n","language":"typescript","kind":"code"},{"code":"(regex\r\n  pattern: (regex_pattern) @regex.pattern\r\n  flags: (regex_flags)? @regex.flags\r\n)","language":"scm","kind":"code"}]}

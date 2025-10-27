@@ -8,5 +8,5 @@
         "rootDir": "src"
     },
     "include": ["src/**/*.ts", "test/**/*.ts", "package.json"],
-    "references": [{ "path": "../lsp-types" }]
+    "references": [{ "path": "../lsp-types" }, { "path": "../parsers" }]
 }

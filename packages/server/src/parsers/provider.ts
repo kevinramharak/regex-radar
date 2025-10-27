@@ -1,7 +1,13 @@
 import { createInterfaceId, Injectable } from "@gitlab/needle";
+import {
+    TreeSitterParserProvider,
+    TreeSitterParser,
+    TreeSitterQuery,
+    IParser,
+    Parser,
+} from "@regex-radar/parsers";
 
 import { IServiceProvider } from "../di";
-import type { IParser } from "./parser";
 
 type LanguageID = string;
 
@@ -11,23 +17,27 @@ export interface IParserProvider {
 
 export const IParserProvider = createInterfaceId<IParserProvider>("IParserProvider");
 
+// TODO: remove this class, replace it with TreeSitterParserProvider
 @Injectable(IParserProvider, [IServiceProvider])
 export class ParserProvider implements IParserProvider {
-    private cache = new Map<LanguageID, IParser>();
+    private parsers = new TreeSitterParserProvider();
+
     constructor(private provider: IServiceProvider) {}
 
     async get(languageId: LanguageID): Promise<IParser> {
-        const cacheHit = this.cache.get(languageId);
-        if (cacheHit) {
-            return cacheHit;
-        }
         const parser = await this.createParser(languageId);
-        this.cache.set(languageId, parser);
         return parser;
     }
 
-    async createParser(languageId: LanguageID): Promise<IParser> {
+    private async createParser(languageId: LanguageID): Promise<IParser> {
         switch (languageId) {
+            case "javascript":
+            case "javascriptreact":
+            case "typescript":
+            case "typescriptreact":
+                const parser = await this.parsers.get(languageId);
+                return new Parser(parser);
+            case "json":
             default:
                 throw new TypeError(`language ID: ${languageId} is not supported`);
         }

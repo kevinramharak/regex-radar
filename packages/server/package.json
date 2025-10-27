@@ -5,7 +5,7 @@
     "publisher": "Kevin Ramharak",
     "description": "The Language Server for Regex Radar",
     "version": "0.1.0",
-    "type": "module",
+    "type": "commonjs",
     "main": "./dist/index.cjs",
     "browser": "./dist/index.browser.cjs",
     "types": "./dist/index.d.ts",
@@ -16,9 +16,9 @@
     },
     "homepage": "https://github.com/kevinramharak/regex-radar",
     "scripts": {
-        "build": "node scripts/build.js",
-        "dev": "node scripts/build.js --watch",
-        "build:production": "node scripts/build.js --production",
+        "build": "node scripts/build.mjs",
+        "dev": "node scripts/build.mjs --watch",
+        "build:production": "node scripts/build.mjs --production",
         "tsc": "tsc -p .",
         "clean": "rm -r dist/"
     },

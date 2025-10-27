@@ -9,10 +9,23 @@ const watch = process.argv.includes("--watch");
 async function main() {
     const ctx = await context({
         ...sharedOptions,
+        /**
+         * VS Code extensions are recommended to be bundled, Web version has to be a single file
+         * Other packages don't need to be
+         */
+        bundle: true,
+        /**
+         * Because it is run as a Module, not a Process in the vscode extension, it has to be cjs format
+         */
+        format: "cjs",
         entryPoints: ["src/index.ts"],
         outfile: "dist/index.cjs",
         platform: "node",
-        external: ["vscode", "oxc-parser"],
+        external: [
+            "vscode",
+            // TODO: fix path resolving of wasm modules
+            "web-tree-sitter/tree-sitter.wasm",
+        ],
     });
     if (watch) {
         await ctx.watch();

@@ -6,13 +6,23 @@ import { RegexRadarLanguageClient } from "@regex-radar/client";
 
 let client: RegexRadarLanguageClient | null = null;
 
-export function registerLanguageClient(context: vscode.ExtensionContext): RegexRadarLanguageClient {
+export async function registerLanguageClient(
+    context: vscode.ExtensionContext
+): Promise<RegexRadarLanguageClient> {
     if (client) {
         return client;
     }
 
     client = createLanguageClient(context);
-    client.start();
+    await client.start();
+
+    // attempt to stall to allow the debugger to attach to the server process
+    if (client.isInDebugMode) {
+        const delay = 1000;
+        client.outputChannel.show();
+        client.debug(`waiting ${delay}ms to let the debugger connect`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+    }
 
     context.subscriptions.push(client);
 
@@ -40,6 +50,7 @@ function createLanguageClient(context: vscode.ExtensionContext): RegexRadarLangu
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ language: "javascript" }, { language: "typescript" }],
         synchronize: {
+            // TODO: figure out if this is required to enable file system watchers on the server side
             fileEvents: vscode.workspace.createFileSystemWatcher(""),
         },
     };

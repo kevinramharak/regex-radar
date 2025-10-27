@@ -4,11 +4,11 @@ import { registerLanguageClient } from "./client";
 import { registerTreeView } from "./tree-data-provider";
 import { registerCodeLens } from "./code-lens-provider";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(logger);
     logger.info("activating");
 
-    const client = registerLanguageClient(context);
+    const client = await registerLanguageClient(context);
     registerTreeView(client, context);
     registerCodeLens(client, context);
 }

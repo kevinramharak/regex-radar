@@ -10,7 +10,7 @@ async function main() {
     const ctx = await context({
         ...sharedOptions,
         entryPoints: ["src/index.ts"],
-        outfile: "dist/index.cjs",
+        outfile: "dist/index.js",
         platform: "node",
     });
     if (watch) {

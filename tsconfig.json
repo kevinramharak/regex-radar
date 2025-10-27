@@ -6,6 +6,7 @@
         "composite": true,
         "emitDeclarationOnly": true,
         "declarationMap": true,
+        "sourceMap": true,
         "paths": {
             "@regex-radar/client": ["./packages/client/src"],
             "@regex-radar/server": ["./packages/server/src"],

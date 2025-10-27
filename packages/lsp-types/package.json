@@ -6,8 +6,8 @@
     "description": "The Language Server Protocol Types for Regex Radar",
     "version": "0.1.0",
     "type": "module",
-    "main": "./dist/index.cjs",
-    "browser": "./dist/index.browser.cjs",
+    "main": "./dist/index.js",
+    "browser": "./dist/index.browser.js",
     "types": "./dist/index.d.ts",
     "repository": {
         "type": "git",

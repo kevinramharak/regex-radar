@@ -54,7 +54,7 @@ export class Parser implements IParser {
             regexes: matches.reduce((results, match) => {
                 const regex = getNamedCapture(match, "regex")!;
                 const pattern = getNamedCapture(match, "regex.pattern")!;
-                const flags = getNamedCapture(match, "regex.pattern");
+                const flags = getNamedCapture(match, "regex.flags");
                 if (pattern) {
                     results.push({
                         pattern: pattern.node.text,

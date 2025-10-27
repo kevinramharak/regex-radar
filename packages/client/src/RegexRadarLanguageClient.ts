@@ -20,6 +20,6 @@ export class RegexRadarLanguageClient extends LanguageClient implements Disposab
     }
 
     async onDiscoveryDidChange(handler: (param: DiscoveryDidChangeParams) => void | Promise<void>) {
-        this.disposables.push(this.onNotification("regexRadar/disovery/didChange", handler));
+        this.disposables.push(this.onNotification("regexRadar/discovery/didChange", handler));
     }
 }

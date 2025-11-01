@@ -1,9 +1,14 @@
-import { createConnection, TextDocuments, ProposedFeatures } from "vscode-languageserver/node";
+import {
+    createConnection,
+    TextDocuments,
+    ProposedFeatures,
+    type TextDocumentRegistrationOptions,
+} from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 import { DiscoveryService } from "./discovery";
 
-import { buildServiceProvider, createServiceCollection } from "./di";
+import { buildServiceProvider, createServiceCollection, LsConnection } from "./di";
 import { MessageHandler } from "./message-handler";
 import { LifecycleHandler } from "./lifecycle";
 import { DocumentsService } from "./documents";
@@ -32,3 +37,5 @@ const provider = buildServiceProvider(collection, {
  */
 const connection = provider.getRequiredService(IConnection);
 connection.listen();
+
+// TODO: use dynamic registration (onInitialized), instead of static registration (onInitialize)

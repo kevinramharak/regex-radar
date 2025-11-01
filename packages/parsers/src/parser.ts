@@ -5,24 +5,19 @@ import type { Node, QueryCapture, QueryMatch } from "web-tree-sitter";
 
 import { TreeSitterQuery, type TreeSitterParser } from "./web-tree-sitter";
 import { languageIdToLanguageName } from "./language-id-to-language-name.js";
+import jsRegexQuery from "./queries/js/regex.scm";
+import jsRegexDirectiveQuery from "./queries/js/regex-directive.scm";
+
+const jsQueries = [jsRegexQuery, jsRegexDirectiveQuery];
 
 /**
  * Use the VSCode Tree Sitter Query extension, it is super helpful
  * @see https://marketplace.visualstudio.com/items?itemName=jrieken.vscode-tree-sitter-query
  */
-const queries: Record<string, string> = {
-    javascript: `(regex
-  pattern: (regex_pattern) @regex.pattern
-  flags: (regex_flags)? @regex.flags
-) @regex`,
-    typescript: `(regex
-  pattern: (regex_pattern) @regex.pattern
-  flags: (regex_flags)? @regex.flags
-) @regex`,
-    tsx: `(regex
-  pattern: (regex_pattern) @regex.pattern
-  flags: (regex_flags)? @regex.flags
-) @regex`,
+const queries: Record<string, string[]> = {
+    javascript: jsQueries,
+    typescript: jsQueries,
+    tsx: jsQueries,
 };
 
 export class Parser implements IParser {
@@ -32,12 +27,15 @@ export class Parser implements IParser {
         }
     }
 
+    /**
+     * TODO: cache the tree's, update onDocumentDidUpdate, or FS event
+     */
     parse(document: TextDocument): ParseResult {
         const text = document.getText();
         // NOTE: needed because for some reason, tree-sitter-typescript does not set its language name
         const languageName = this.parser.language!.name! || languageIdToLanguageName[document.languageId];
-        const querySource = queries[languageName];
-        if (!querySource) {
+        const querySources = queries[languageName];
+        if (!querySources) {
             console.warn(
                 `no querySource for language.name: ${this.parser.language?.name} (document.languageId : ${document.languageId})`
             );
@@ -46,26 +44,67 @@ export class Parser implements IParser {
                 uri: document.uri,
             };
         }
-        const query = new TreeSitterQuery(this.parser.language!, querySource);
-        const tree = this.parser.parse(text, null, {})!;
-        const cursor = tree.walk();
-        const matches = query.matches(cursor.currentNode);
+        const matches = querySources.flatMap((source) => {
+            const query = new TreeSitterQuery(this.parser.language!, source);
+            const tree = this.parser.parse(text, null, {})!;
+            const matches = query.matches(tree.rootNode, {});
+            return matches;
+        });
         return {
-            regexes: matches.reduce((results, match) => {
-                const regex = getNamedCapture(match, "regex")!;
-                const pattern = getNamedCapture(match, "regex.pattern")!;
-                const flags = getNamedCapture(match, "regex.flags");
-                if (pattern) {
-                    results.push({
-                        pattern: pattern.node.text,
-                        flags: flags?.node.text ?? "",
-                        range: createRangeFromNode(regex.node),
-                    });
-                }
-                return results;
-            }, [] as RegexMatch[]),
+            regexes: createRegexMatchCollection(matches),
             uri: document.uri,
         };
+    }
+}
+
+function createRegexMatchCollection(matches: QueryMatch[]): RegexMatch[] {
+    return matches.reduce((results, match) => {
+        const type = getRegexMatchType(match);
+        switch (type) {
+            case RegexMatchType.Unknown: {
+                break;
+            }
+            case RegexMatchType.Constructor:
+            case RegexMatchType.Function:
+            case RegexMatchType.Literal: {
+                const regex = getNamedCapture(match, "regex")!;
+                const pattern = getNamedCaptures(match, "regex.pattern")!;
+                const flags = getNamedCapture(match, "regex.flags");
+                results.push({
+                    type,
+                    pattern: pattern.map((capture) => capture.node.text).join(""),
+                    flags: flags?.node.text ?? "",
+                    range: createRangeFromNode(regex.node),
+                });
+                break;
+            }
+            case RegexMatchType.String: {
+                const regex = getNamedCapture(match, "regex")!;
+                const pattern = getNamedCaptures(match, "regex.pattern")!;
+                results.push({
+                    type,
+                    pattern: pattern.map((capture) => capture.node.text).join(""),
+                    range: createRangeFromNode(regex.node),
+                });
+            }
+        }
+        return results;
+    }, [] as RegexMatch[]);
+}
+
+function getRegexMatchType(match: QueryMatch): RegexMatchType {
+    const type = match.setProperties?.["regex.type"];
+    switch (type) {
+        case "literal":
+            return RegexMatchType.Literal;
+        case "constructor":
+            return RegexMatchType.Constructor;
+        case "function":
+            return RegexMatchType.Function;
+        case "string":
+            return RegexMatchType.String;
+        default:
+            return RegexMatchType.Unknown;
     }
 }
 
@@ -86,6 +125,10 @@ function getNamedCapture(match: QueryMatch, name: string): QueryCapture | null {
     return match.captures.find((capture) => capture.name === name) ?? null;
 }
 
+function getNamedCaptures(match: QueryMatch, name: string): QueryCapture[] {
+    return match.captures.filter((capture) => capture.name === name);
+}
+
 export interface IParser {
     parse(document: TextDocument): Promise<ParseResult> | ParseResult;
 }
@@ -95,8 +138,40 @@ export interface ParseResult {
     regexes: RegexMatch[];
 }
 
-export interface RegexMatch {
+export type RegexMatch = RegexMatchLiteral | RegexMatchConstructor | RegexMatchFunction | RegexMatchString;
+
+enum RegexMatchType {
+    Unknown = 0,
+    Literal = 1,
+    Constructor = 2,
+    Function = 3,
+    String = 4,
+}
+
+interface RegexMatchBase {
+    type: RegexMatchType;
+    range: Range;
+}
+
+export interface RegexMatchLiteral extends RegexMatchBase {
+    type: RegexMatchType.Literal;
     pattern: string;
     flags: string;
-    range: Range;
+}
+
+export interface RegexMatchConstructor extends RegexMatchBase {
+    type: RegexMatchType.Constructor;
+    pattern: string;
+    flags: string;
+}
+
+export interface RegexMatchFunction extends RegexMatchBase {
+    type: RegexMatchType.Function;
+    pattern: string;
+    flags: string;
+}
+
+export interface RegexMatchString extends RegexMatchBase {
+    type: RegexMatchType.String;
+    pattern: string;
 }

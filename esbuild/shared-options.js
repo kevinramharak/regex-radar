@@ -1,6 +1,7 @@
 // @ts-check
 
 // import { esbuildProblemMatcherPlugin } from "./plugins/problem-matcher-plugin.js";
+import { scmImporterPlugin } from "./plugins/scm-importer-plugin.js";
 import { workspacePackagesPlugin } from "./plugins/workspace-packages-plugin.js";
 
 const isProduction = process.argv.includes("--production");
@@ -29,5 +30,5 @@ export const sharedOptions = {
      */
     metafile: enableMetaFile,
     treeShaking: true,
-    plugins: [workspacePackagesPlugin],
+    plugins: [workspacePackagesPlugin, scmImporterPlugin],
 };

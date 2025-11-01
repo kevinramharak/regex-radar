@@ -1,9 +1,14 @@
 import { TextDocument, type DocumentUri } from "vscode-languageserver-textdocument";
 import {
+    DidChangeTextDocumentNotification,
+    DidCloseTextDocumentNotification,
+    DidOpenTextDocumentNotification,
     TextDocumentSyncKind,
     type InitializedParams,
     type InitializeParams,
     type InitializeResult,
+    type TextDocumentChangeRegistrationOptions,
+    type TextDocumentRegistrationOptions,
     type TextEdit,
 } from "vscode-languageserver";
 import { URI } from "vscode-uri";
@@ -71,6 +76,21 @@ export class DocumentsService implements IDocumentsService, IOnInitialized, Disp
     }
 
     onInitialized(params: InitializedParams): void | Promise<void> {
+        // TODO: make languages configurable
+        const registrationParams: TextDocumentRegistrationOptions = {
+            documentSelector: [{ language: "javascript" }, { language: "typescript" }],
+        };
+        Promise.all([
+            this.connection.client.register(DidOpenTextDocumentNotification.type, registrationParams),
+            this.connection.client.register(DidChangeTextDocumentNotification.type, {
+                ...registrationParams,
+                syncKind: TextDocumentSyncKind.Incremental,
+            }),
+            this.connection.client.register(DidCloseTextDocumentNotification.type, registrationParams),
+        ]).then((disposables) => {
+            this.disposables.push(...disposables);
+        });
+
         const onDidChangeContentHandlers = this.provider.getServices(
             collection(IOnTextDocumentDidChangeHandler)
         );

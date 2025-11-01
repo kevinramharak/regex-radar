@@ -46,17 +46,37 @@
             "type": "object",
             "title": "Regex Radar",
             "properties": {
+                "regexRadar.discovery.enabled": {
+                    "description": "Enables discovery of regular expressions throughout the workspace.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "regexRadar.languages.enabled": {
+                    "description": "The programming languages that Regex Radar will provide its features for.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "javascript",
+                            "typescript"
+                        ]
+                    },
+                    "uniqueItems": true,
+                    "default": [
+                        "javascript",
+                        "typescript"
+                    ]
+                },
                 "@regex-radar/client.trace.server": {
-                    "scope": "window",
+                    "description": "Traces the communication between VS Code and the language server.",
                     "type": "string",
                     "enum": [
                         "off",
                         "messages",
                         "verbose"
                     ],
-                    "default": "off",
-                    "description": "Traces the communication between VS Code and the language server.",
-                    "ignoreSync": true
+                    "ignoreSync": true,
+                    "default": "off"
                 }
             }
         },

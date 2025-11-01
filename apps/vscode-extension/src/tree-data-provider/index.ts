@@ -51,7 +51,6 @@ export function registerTreeView(client: RegexRadarLanguageClient, context: vsco
         vscode.commands.registerCommand(
             "regex-radar.tree-data-provider.reveal",
             async (entry: RegexEntry) => {
-                console.log(entry);
                 const options = {
                     select: true,
                     focus: true,

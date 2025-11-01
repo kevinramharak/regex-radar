@@ -14,9 +14,12 @@
 - [ ] complexity
 - [ ] code actions (simplify, convert literal/constructor)
 - [ ] diagnostics (warnings, hints, tips)
-- [ ] more languages
-- [ ] redos / benchmark
+    - [ ] redos (https://github.com/makenowjust-labs/recheck)
+    - [ ] benchmark ?
+- [ ] more languages (based on tree-sitter grammars)
 - [ ] Test utilities
+- [ ] DSL's like https://github.com/francisrstokes/super-expressive
+- [ ] template tagged function like https://www.npmjs.com/package/regex
 
 ## inspiration
 

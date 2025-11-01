@@ -40,6 +40,7 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
     }
 
     constructor(private readonly client: RegexRadarLanguageClient) {
+        // TODO: maybe move caching to LS client?
         client.onDiscoveryDidChange(({ uri }: { uri: string }) => {
             let entry = this.entries.get(uri);
             if (!entry) {

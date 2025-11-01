@@ -284,7 +284,7 @@ export class DiscoveryService
             },
             info: {
                 pattern: regex.pattern,
-                flags: regex.flags,
+                flags: "flags" in regex ? regex.flags : "",
                 // TODO: model this properly
                 isDynamic: regex.pattern === "<dynamic>",
             },

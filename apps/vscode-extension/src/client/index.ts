@@ -48,7 +48,6 @@ function createLanguageClient(context: vscode.ExtensionContext): RegexRadarLangu
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ language: "javascript" }, { language: "typescript" }],
         synchronize: {
             // TODO: figure out if this is required to enable file system watchers on the server side
             fileEvents: vscode.workspace.createFileSystemWatcher(""),

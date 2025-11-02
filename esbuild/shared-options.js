@@ -1,12 +1,11 @@
 // @ts-check
-
 // import { esbuildProblemMatcherPlugin } from "./plugins/problem-matcher-plugin.js";
-import { scmImporterPlugin } from "./plugins/scm-importer-plugin.js";
-import { workspacePackagesPlugin } from "./plugins/workspace-packages-plugin.js";
+import { scmImporterPlugin } from './plugins/scm-importer-plugin.js';
+import { workspacePackagesPlugin } from './plugins/workspace-packages-plugin.js';
 
-const isProduction = process.argv.includes("--production");
-const isWatch = process.argv.includes("--watch");
-const enableMetaFile = isProduction || process.argv.includes("--metafile");
+const isProduction = process.argv.includes('--production');
+const isWatch = process.argv.includes('--watch');
+const enableMetaFile = isProduction || process.argv.includes('--metafile');
 
 /**
  * @type {import('esbuild').BuildOptions}
@@ -22,8 +21,8 @@ export const sharedOptions = {
      * Based on the node version bundled with vscode 1.105.x
      * @see https://github.com/ewanharris/vscode-versions
      */
-    target: "node22.19",
-    logLevel: "info",
+    target: 'node22.19',
+    logLevel: 'info',
     /**
      * allows for analyzing the bundle
      * @see https://esbuild.github.io/analyze/

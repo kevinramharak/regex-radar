@@ -1,17 +1,18 @@
 // @ts-check
+import { context } from 'esbuild';
 
-import { context } from "esbuild";
-import { sharedOptions } from "../../../esbuild/shared-options.js";
+import { sharedOptions } from '../../../esbuild/shared-options.js';
 
-const production = process.argv.includes("--production");
-const watch = process.argv.includes("--watch");
+const production = process.argv.includes('--production');
+const watch = process.argv.includes('--watch');
 
 async function main() {
     const ctx = await context({
         ...sharedOptions,
-        entryPoints: ["src/index.ts"],
-        outfile: "dist/index.js",
-        platform: "node",
+        entryPoints: ['src/**/*.ts'],
+        outbase: 'src',
+        outdir: 'dist',
+        platform: 'node',
     });
     if (watch) {
         await ctx.watch();

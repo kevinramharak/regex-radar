@@ -1,7 +1,9 @@
 import type { DidChangeTextDocumentParams } from 'vscode-languageserver';
-import type { LsTextDocuments } from '../di';
-import { createInterfaceId } from '@gitlab/needle';
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument';
+
+import { createInterfaceId } from '@gitlab/needle';
+
+import type { LsTextDocuments } from '../di';
 
 type NotificationEventType =
     | 'onDidChangeContent'

@@ -1,10 +1,11 @@
-import { createInterfaceId, Injectable } from '@gitlab/needle';
+import { Injectable, createInterfaceId } from '@gitlab/needle';
+
 import {
-    TreeSitterParserProvider,
-    TreeSitterParser,
-    TreeSitterQuery,
     IParser,
     Parser,
+    TreeSitterParser,
+    TreeSitterParserProvider,
+    TreeSitterQuery,
 } from '@regex-radar/parsers';
 
 import { IServiceProvider } from '../di';

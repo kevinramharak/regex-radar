@@ -1,6 +1,7 @@
+import * as vscode from 'vscode';
+
 import { RegexRadarLanguageClient } from '@regex-radar/client';
 import { EntryType } from '@regex-radar/lsp-types';
-import * as vscode from 'vscode';
 
 /**
  * TODO: move this server side with:

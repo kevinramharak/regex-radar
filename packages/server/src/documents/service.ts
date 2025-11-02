@@ -1,41 +1,43 @@
-import { TextDocument, type DocumentUri } from 'vscode-languageserver-textdocument';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
+
 import {
     DidChangeTextDocumentNotification,
     DidCloseTextDocumentNotification,
     DidOpenTextDocumentNotification,
-    TextDocumentSyncKind,
-    type InitializedParams,
     type InitializeParams,
     type InitializeResult,
+    type InitializedParams,
     type TextDocumentRegistrationOptions,
+    TextDocumentSyncKind,
     type TextEdit,
 } from 'vscode-languageserver';
+import { type DocumentUri, TextDocument } from 'vscode-languageserver-textdocument';
 import { URI } from 'vscode-uri';
 
-import * as path from 'path';
-import * as fs from 'fs/promises';
-
 import {
-    collection,
-    createInterfaceId,
     Implements,
-    isDisposable,
     Service,
     ServiceLifetime,
+    collection,
+    createInterfaceId,
+    isDisposable,
 } from '@gitlab/needle';
 
-import { LsConnection, LsTextDocuments, IServiceProvider } from '../di';
-import { getLanguageIdForFileExtension } from '../language-identifiers';
+import 'wasi';
+
+import { IServiceProvider, LsConnection, LsTextDocuments } from '../di';
+import { IOnInitialize, IOnInitialized } from '../lifecycle';
+import { Disposable } from '../util/disposable';
+import { getLanguageIdForFileExtension } from '../util/language-identifiers';
 import {
-    IOnTextDocumentDidCloseHandler,
-    IOnTextDocumentDidSaveHandler,
     IOnTextDocumentDidChangeHandler,
+    IOnTextDocumentDidCloseHandler,
     IOnTextDocumentDidOpenHandler,
+    IOnTextDocumentDidSaveHandler,
     IOnTextDocumentWillSaveHandler,
     IOnTextDocumentWillSaveWaitUntilHandler,
 } from './events';
-import { IOnInitialized, IOnInitialize } from '../lifecycle';
-import { Disposable } from '../util/disposable';
 
 export interface IDocumentsService {
     getOrCreate(uri: DocumentUri): Promise<TextDocument>;

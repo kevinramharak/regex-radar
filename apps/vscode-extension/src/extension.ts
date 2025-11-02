@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
+
 import * as logger from './logger';
 import { registerLanguageClient } from './client';
-import { registerTreeView } from './tree-data-provider';
 import { registerCodeLens } from './code-lens-provider';
+import { registerTreeView } from './tree-data-provider';
 
 export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(logger);

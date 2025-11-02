@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
-import { RegexRadarTreeDataProvider } from './RegexRadarTreeDataProvider';
+
 import { RegexRadarLanguageClient } from '@regex-radar/client';
 import { Entry, RegexEntry } from '@regex-radar/lsp-types';
+
 import * as logger from '../logger';
+import { RegexRadarTreeDataProvider } from './RegexRadarTreeDataProvider';
 
 export function registerTreeView(client: RegexRadarLanguageClient, context: vscode.ExtensionContext) {
     const treeDataProvider = new RegexRadarTreeDataProvider(client);

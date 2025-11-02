@@ -1,31 +1,32 @@
-import { URI } from 'vscode-uri';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
+
 import type { TextDocumentChangeEvent } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
-import { createInterfaceId, Implements, Injectable } from '@gitlab/needle';
+import { URI } from 'vscode-uri';
 
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
 
 import {
-    EntryType,
     type DirectoryEntry,
     type DiscoveryParams,
     type DiscoveryResult,
     type Entry,
+    EntryType,
     type FileEntry,
-    type lsp,
     type RegexEntry,
     type WorkspaceEntry,
+    type lsp,
 } from '@regex-radar/lsp-types';
 import type { RegexMatch } from '@regex-radar/lsp-types';
-import { Disposable } from '../util/disposable';
 
-import { IRequestMessageHandler } from '../message-handler';
 import { LsConnection } from '../di/external-interfaces';
 import { IDocumentsService } from '../documents';
 import { IOnTextDocumentDidChangeHandler, IOnTextDocumentDidCloseHandler } from '../documents/events';
 import { ILogger } from '../logger';
+import { IRequestMessageHandler } from '../message-handler';
 import { IParserProvider } from '../parsers';
+import { Disposable } from '../util/disposable';
 
 export interface IDiscoveryService {
     discover<T extends EntryType = EntryType>(params: DiscoveryParams<T>): Promise<DiscoveryResult<T>>;

@@ -1,4 +1,5 @@
 import { LogOutputChannel, window } from 'vscode';
+
 import { displayName } from '../package.json';
 
 let instance: null | LogOutputChannel = null;

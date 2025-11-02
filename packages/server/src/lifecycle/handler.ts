@@ -1,12 +1,11 @@
 import { InitializeResult, type ServerCapabilities } from 'vscode-languageserver';
-import { collection, createInterfaceId, Injectable } from '@gitlab/needle';
 
-import { Disposable } from '../util/disposable';
-
-import { IServiceProvider, LsConnection } from '../di';
-import { IOnExit, IOnInitialize, IOnInitialized, IOnShutdown } from './events';
+import { Injectable, collection, createInterfaceId } from '@gitlab/needle';
 
 import packageJson from '../../package.json';
+import { IServiceProvider, LsConnection } from '../di';
+import { Disposable } from '../util/disposable';
+import { IOnExit, IOnInitialize, IOnInitialized, IOnShutdown } from './events';
 
 export interface ILifecycleHandler {
     register(): void;
@@ -28,11 +27,8 @@ export class LifecycleHandler extends Disposable implements ILifecycleHandler {
         super();
     }
 
-    register() {
+    private registerOnInitializeHandlers() {
         const onInitializeHandlers = this.provider.getServices(collection(IOnInitialize));
-        const onInitializedHandlers = this.provider.getServices(collection(IOnInitialized));
-        const onShutdownHandlers = this.provider.getServices(collection(IOnShutdown));
-        const onExitHandlers = this.provider.getServices(collection(IOnExit));
         this.disposables.push(
             /**
              * @see https://microsoft.github.io/language-server-protocol/specifications/specification-current#initialize
@@ -62,6 +58,12 @@ export class LifecycleHandler extends Disposable implements ILifecycleHandler {
                     },
                 };
             }),
+        );
+    }
+
+    private registerOnInitializedHandlers() {
+        const onInitializedHandlers = this.provider.getServices(collection(IOnInitialized));
+        this.disposables.push(
             /**
              * @see https://microsoft.github.io/language-server-protocol/specifications/specification-current#initialized
              */
@@ -77,6 +79,12 @@ export class LifecycleHandler extends Disposable implements ILifecycleHandler {
                         }),
                     ),
             ),
+        );
+    }
+
+    private registerOnShutdownHandlers() {
+        const onShutdownHandlers = this.provider.getServices(collection(IOnShutdown));
+        this.disposables.push(
             /**
              * @see https://microsoft.github.io/language-server-protocol/specifications/specification-current#initialized
              *
@@ -93,6 +101,12 @@ export class LifecycleHandler extends Disposable implements ILifecycleHandler {
                         }),
                     ),
             ),
+        );
+    }
+
+    private registerOnExitHandlers() {
+        const onExitHandlers = this.provider.getServices(collection(IOnExit));
+        this.disposables.push(
             /**
              *
              * @see https://microsoft.github.io/language-server-protocol/specifications/specification-current#initialized
@@ -126,5 +140,12 @@ export class LifecycleHandler extends Disposable implements ILifecycleHandler {
                 `error occured in lifecycle event: ${name} - thrown value has no string representation`,
             );
         }
+    }
+
+    register() {
+        this.registerOnInitializeHandlers();
+        this.registerOnInitializedHandlers();
+        this.registerOnShutdownHandlers();
+        this.registerOnExitHandlers();
     }
 }

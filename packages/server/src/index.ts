@@ -1,18 +1,17 @@
-import { createConnection, TextDocuments, ProposedFeatures } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { ProposedFeatures, TextDocuments, createConnection } from 'vscode-languageserver/node';
 
-import { DiscoveryService } from './discovery';
-
-import { buildServiceProvider, createServiceCollection, LsConnection } from './di';
-import { MessageHandler } from './message-handler';
-import { LifecycleHandler } from './lifecycle';
-import { DocumentsService } from './documents';
-import { Logger } from './logger';
-import { Connection, IConnection } from './connection';
-import { ParserProvider } from './parsers';
-import { DiagnosticsService } from './diagnostics';
 import { CodeActionService } from './code-actions';
 import { Configuration } from './configuration';
+import { Connection, IConnection } from './connection';
+import { LsConnection, buildServiceProvider, createServiceCollection } from './di';
+import { DiagnosticsService } from './diagnostics';
+import { DiscoveryService } from './discovery';
+import { DocumentsService } from './documents';
+import { LifecycleHandler } from './lifecycle';
+import { Logger } from './logger';
+import { MessageHandler } from './message-handler';
+import { ParserProvider } from './parsers';
 
 const collection = createServiceCollection({
     connection: createConnection(ProposedFeatures.all),

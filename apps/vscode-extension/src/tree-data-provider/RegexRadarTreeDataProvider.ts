@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
+
+import { RegexRadarLanguageClient } from '@regex-radar/client';
 import {
-    EntryType,
-    Entry,
-    WorkspaceEntry,
     DirectoryEntry,
+    Entry,
+    EntryType,
     FileEntry,
     RegexEntry,
+    WorkspaceEntry,
 } from '@regex-radar/lsp-types';
-import { RegexRadarLanguageClient } from '@regex-radar/client';
+
 import * as logger from '../logger';
 
 type OnDidChangeTreeDataEventParams = Entry | undefined | null | void;

@@ -4,6 +4,7 @@ import {
     type WorkspaceDiagnosticParams,
     type WorkspaceDiagnosticReport,
 } from 'vscode-languageserver';
+
 import { createInterfaceId } from '@gitlab/needle';
 
 export interface IOnDocumentDiagnostic {

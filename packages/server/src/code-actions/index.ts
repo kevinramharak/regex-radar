@@ -1,20 +1,21 @@
 import {
-    CodeActionKind,
-    CodeActionRequest,
     type CodeAction,
+    CodeActionKind,
     type CodeActionParams,
+    CodeActionRequest,
     type Diagnostic,
     type InitializedParams,
 } from 'vscode-languageserver';
-import { createInterfaceId, Implements, Injectable } from '@gitlab/needle';
 
-import { EntryType, RegexMatchType, type RegexEntry } from '@regex-radar/lsp-types';
+import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
 
-import { IRequestMessageHandler } from '../message-handler';
+import { EntryType, type RegexEntry, RegexMatchType } from '@regex-radar/lsp-types';
+
 import { LsConnection } from '../di/external-interfaces';
+import { IDiagnosticsService } from '../diagnostics';
 import { IDiscoveryService } from '../discovery';
 import { IOnInitialized } from '../lifecycle';
-import { IDiagnosticsService } from '../diagnostics';
+import { IRequestMessageHandler } from '../message-handler';
 import { Disposable } from '../util/disposable';
 
 export interface ICodeActionService {}

@@ -6,5 +6,26 @@
   "trailingComma": "all",
   "arrowParens": "always",
   "singleQuote": true,
-  "semi": true
+  "semi": true,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports"
+  ],
+  "importOrder": [
+    "^node:",
+    "<SEPERATOR>",
+    "^vscode",
+    "^@gitlab/needle$",
+    "<SEPERATOR>",
+    "<THIRD_PARTY_MODULES>",
+    "<SEPERATOR>",
+    "^@regex-radar/",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": false,
+  "importOrderGroupNamespaceSpecifiers": true,
+  "importOrderParserPlugins": [
+    "typescript",
+    "decorators"
+  ]
 }

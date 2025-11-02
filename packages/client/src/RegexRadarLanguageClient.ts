@@ -1,12 +1,14 @@
 import {
-    LanguageClient,
     type CancellationToken,
     type Disposable,
+    LanguageClient,
     type LanguageClientOptions,
     type ServerOptions,
 } from 'vscode-languageclient/node';
-import { displayName, name } from '../package.json';
+
 import type { DiscoveryDidChangeParams, DiscoveryParams, DiscoveryResult } from '@regex-radar/lsp-types';
+
+import { displayName, name } from '../package.json';
 
 export class RegexRadarLanguageClient extends LanguageClient implements Disposable {
     private disposables: Disposable[] = [];

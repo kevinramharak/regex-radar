@@ -1,4 +1,5 @@
-import { createInstanceDescriptor, ServiceCollection } from '@gitlab/needle';
+import { ServiceCollection, createInstanceDescriptor } from '@gitlab/needle';
+
 import { LsConnection, LsTextDocuments } from './external-interfaces';
 
 export interface ServiceCollectionExternals {

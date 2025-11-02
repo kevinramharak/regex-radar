@@ -1,5 +1,5 @@
 import { languageIdToLanguageName } from './language-id-to-language-name.js';
-import { TreeSitterParser, Language } from './web-tree-sitter.js';
+import { Language, TreeSitterParser } from './web-tree-sitter.js';
 
 export class TreeSitterParserProvider {
     private cache = new Map<string, Promise<TreeSitterParser>>();

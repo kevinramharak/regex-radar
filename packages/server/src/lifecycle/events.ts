@@ -1,10 +1,11 @@
 import type {
+    CancellationToken,
     InitializeParams,
     InitializeResult,
     InitializedParams,
     SetTraceParams,
-    CancellationToken,
 } from 'vscode-languageserver';
+
 import { createInterfaceId } from '@gitlab/needle';
 
 /**

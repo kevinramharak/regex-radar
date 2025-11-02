@@ -1,10 +1,9 @@
-import { createInterfaceId, Injectable } from '@gitlab/needle';
-
-import { Disposable } from './util/disposable';
+import { Injectable, createInterfaceId } from '@gitlab/needle';
 
 import { LsConnection } from './di';
 import { ILifecycleHandler } from './lifecycle';
 import { IMessageHandler } from './message-handler';
+import { Disposable } from './util/disposable';
 
 export interface IConnection {
     listen(): void;

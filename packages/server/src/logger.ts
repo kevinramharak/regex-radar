@@ -1,4 +1,5 @@
-import { createInterfaceId, Injectable } from '@gitlab/needle';
+import { Injectable, createInterfaceId } from '@gitlab/needle';
+
 import { LsConnection } from './di';
 import { Disposable } from './util/disposable';
 

@@ -1,6 +1,7 @@
-import { collection, createInterfaceId, Injectable } from '@gitlab/needle';
-import { LsConnection } from './di/external-interfaces';
+import { Injectable, collection, createInterfaceId } from '@gitlab/needle';
+
 import { IServiceProvider } from './di';
+import { LsConnection } from './di/external-interfaces';
 import { Disposable } from './util/disposable';
 
 export interface IRequestMessageHandler {

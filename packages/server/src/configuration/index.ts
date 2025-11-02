@@ -1,20 +1,21 @@
 import {
-    type InitializeParams,
     type ClientCapabilities,
-    type DidChangeConfigurationParams,
     DidChangeConfigurationNotification,
+    type DidChangeConfigurationParams,
+    type InitializeParams,
     type InitializeResult,
     type WorkspaceFoldersChangeEvent,
 } from 'vscode-languageserver';
-import { createInterfaceId, Implements, Injectable } from '@gitlab/needle';
+
+import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
 
 import type { lsp } from '@regex-radar/lsp-types';
 
+import { EXTENSION_ID } from '../constants';
 import { IServiceProvider, LsConnection } from '../di';
 import { IOnInitialize, IOnInitialized } from '../lifecycle';
 import { createDeferred, isDeferred } from '../util/deferred';
 import { Disposable } from '../util/disposable';
-import { EXTENSION_ID } from '../constants';
 
 export interface ConfigurationSchema extends ConfigurationSchemaClient, ConfigurationSchemaServer {}
 

@@ -1,21 +1,22 @@
 import {
-    DiagnosticSeverity,
-    DocumentDiagnosticReportKind,
-    DocumentDiagnosticRequest,
     type Diagnostic,
+    DiagnosticSeverity,
     type DocumentDiagnosticParams,
     type DocumentDiagnosticReport,
+    DocumentDiagnosticReportKind,
+    DocumentDiagnosticRequest,
 } from 'vscode-languageserver';
-import { createInterfaceId, Implements, Injectable } from '@gitlab/needle';
 
-import { EntryType, RegexMatchType, type RegexEntry } from '@regex-radar/lsp-types';
+import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
 
-import { IRequestMessageHandler } from '../message-handler';
+import { EntryType, type RegexEntry, RegexMatchType } from '@regex-radar/lsp-types';
+
+import { EXTENSION_ID } from '../constants';
 import { LsConnection } from '../di/external-interfaces';
 import { IDiscoveryService } from '../discovery';
 import { IOnInitialized } from '../lifecycle';
+import { IRequestMessageHandler } from '../message-handler';
 import { Disposable } from '../util/disposable';
-import { EXTENSION_ID } from '../constants';
 
 export interface IDiagnosticsService {
     onDiagnosticRequest(params: DocumentDiagnosticParams): Promise<DocumentDiagnosticReport>;

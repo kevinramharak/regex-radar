@@ -1,4 +1,5 @@
-import { type WorkspaceFoldersChangeEvent, DidChangeConfigurationParams } from 'vscode-languageserver';
+import { DidChangeConfigurationParams, type WorkspaceFoldersChangeEvent } from 'vscode-languageserver';
+
 import { createInterfaceId } from '@gitlab/needle';
 
 export interface IOnDidChangeConfiguration {

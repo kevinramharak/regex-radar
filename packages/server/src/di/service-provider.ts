@@ -1,12 +1,13 @@
 import {
-    createInterfaceId,
-    ServiceProvider as _ServiceProvider,
+    Constructor,
     Injectable,
-    ServiceIdentifier,
     ServiceCollection,
     ServiceDescriptor,
-    Constructor,
+    ServiceIdentifier,
+    ServiceProvider as _ServiceProvider,
+    createInterfaceId,
 } from '@gitlab/needle';
+
 import { Disposable } from '../util/disposable';
 
 export interface IServiceProvider {

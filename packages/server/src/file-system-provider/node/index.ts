@@ -14,10 +14,9 @@ import {
 
 import { createInstanceDescriptor } from '@gitlab/needle';
 
-import { IFileSystemProvider } from '..';
-
 import { FileType, FilePermission } from '../../file-system/file-stats';
 import { createFileSystemProviderError, FileSystemProviderErrorCode } from '../error';
+import { IFileSystemProvider } from '../provider';
 
 import { toFileSystemProviderError } from './error';
 

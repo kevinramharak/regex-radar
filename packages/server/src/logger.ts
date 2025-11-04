@@ -4,6 +4,7 @@ import { LsConnection } from './di';
 import { Disposable } from './util/disposable';
 
 export interface ILogger {
+    trace(message: string): void;
     debug(message: string): void;
     log(message: string): void;
     info(message: string): void;
@@ -21,6 +22,10 @@ export const ILogger = createInterfaceId<ILogger>('ILogger');
 export class Logger extends Disposable implements ILogger {
     constructor(private readonly connection: LsConnection) {
         super();
+    }
+
+    trace(message: string): void {
+        this.connection.console.debug(message);
     }
 
     debug(message: string): void {

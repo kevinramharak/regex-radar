@@ -1,4 +1,3 @@
-import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
 import type { TextDocumentChangeEvent } from 'vscode-languageserver';
@@ -23,6 +22,8 @@ import type { RegexMatch } from '@regex-radar/lsp-types';
 import { LsConnection } from '../di/external-interfaces';
 import { IDocumentsService } from '../documents';
 import { IOnTextDocumentDidChangeHandler, IOnTextDocumentDidCloseHandler } from '../documents/events';
+import { IFileSystem } from '../file-system';
+import { FileType } from '../file-system/file-stats';
 import { ILogger } from '../logger';
 import { IRequestMessageHandler } from '../message-handler';
 import { IParserProvider } from '../parsers';
@@ -37,16 +38,16 @@ export const IDiscoveryService = createInterfaceId<IDiscoveryService>('IDiscover
 type CachableEntry<T extends EntryType = EntryType> = Exclude<Entry, RegexEntry> & { type: T };
 
 type GetTreeParams = {
-    uri: lsp.URI;
+    uri: URI;
     fsPath: string;
-    parentUri?: lsp.URI;
+    parentUri?: URI;
     ignoreCache?: boolean;
 };
 
 @Implements(IRequestMessageHandler)
 @Implements(IOnTextDocumentDidChangeHandler)
 @Implements(IOnTextDocumentDidCloseHandler)
-@Injectable(IDiscoveryService, [IDocumentsService, LsConnection, ILogger, IParserProvider])
+@Injectable(IDiscoveryService, [IDocumentsService, LsConnection, ILogger, IParserProvider, IFileSystem])
 export class DiscoveryService
     extends Disposable
     implements
@@ -77,6 +78,7 @@ export class DiscoveryService
         private connection: LsConnection,
         private logger: ILogger,
         private parsers: IParserProvider,
+        private fs: IFileSystem,
     ) {
         super();
     }
@@ -88,7 +90,7 @@ export class DiscoveryService
     onTextDocumentDidOpen(event: TextDocumentChangeEvent<TextDocument>) {
         if (this.cache.has(event.document.uri)) {
             // deregister any active file watchers
-            this.logger.debug(`(discovery) should deregister file watchers for : ${event.document.uri}`);
+            this.logger.trace(`(discovery) should deregister file watchers for : ${event.document.uri}`);
         }
     }
 
@@ -97,16 +99,15 @@ export class DiscoveryService
         if (!entry || entry.type !== EntryType.File) {
             return;
         }
-        this.logger.debug(`(discovery) invalidating cache entry for: ${event.document.uri}`);
+        this.logger.trace(`(discovery) invalidating cache entry for: ${event.document.uri}`);
         this.cache.delete(event.document.uri);
-        this.logger.debug(`(discovery) sending didChange notification for: ${event.document.uri}`);
         await this.connection.sendNotification('regexRadar/discovery/didChange', { uri: entry.uri });
     }
 
     onTextDocumentDidClose(event: TextDocumentChangeEvent<TextDocument>) {
         if (this.cache.has(event.document.uri)) {
             // register a file watcher
-            this.logger.debug(`(discovery) should register file watcher for : ${event.document.uri}`);
+            this.logger.trace(`(discovery) should register file watcher for : ${event.document.uri}`);
         }
     }
 
@@ -114,19 +115,16 @@ export class DiscoveryService
         uri,
         hint,
     }: DiscoveryParams<T>): Promise<DiscoveryResult<T>> {
-        this.logger.debug(
-            `(discovery) request for ${uri} with hint: ${hint ? EntryType[hint] : '<no hint>'}`,
-        );
         if (this.isUriIgnored(uri)) {
-            this.logger.debug(`(discovery) ignored discovery request for: ${uri}`);
+            this.logger.trace(`(discovery) ignored discovery request for: ${uri}`);
             return null;
         }
 
+        // TODO: ignore folders/files with no regex entries as decendants
         // TODO: handle parse errors, send previous result if any
         // TODO: workspaces should be monitored recursively for edits, managed documents should **NOT** be watched
         //       research if recursive watcher is more effecient than watching each file / directory on its own
         const tree = await this.getTreeForUri(uri, hint);
-        this.logger.debug(`(discovery) responding to discovery request for: ${uri}`);
         // TODO: fix this type assertion
         return tree as DiscoveryResult<T>;
     }
@@ -135,11 +133,11 @@ export class DiscoveryService
         const cacheHit = this.cache.get(uri);
         if (cacheHit) {
             if (!hint || hint === cacheHit.type) {
-                this.logger.debug(`(discovery) cache hit for: ${uri}`);
+                this.logger.trace(`(discovery) cache hit for: ${uri}`);
                 return cacheHit as CachableEntry<T>;
             }
         }
-        this.logger.debug(`(discovery) cache miss for: ${uri}`);
+        this.logger.trace(`(discovery) cache miss for: ${uri}`);
         return null;
     }
 
@@ -180,11 +178,11 @@ export class DiscoveryService
         if (cacheHit) {
             return cacheHit;
         }
-        const { fsPath, scheme } = URI.parse(uri);
-        if (scheme !== 'file') {
+        const parsedUri = URI.parse(uri);
+        if (parsedUri.scheme !== 'file') {
             return null;
         }
-        const params: GetTreeParams = { fsPath, uri, ignoreCache: true };
+        const params: GetTreeParams = { fsPath: parsedUri.fsPath, uri: parsedUri, ignoreCache: true };
         switch (hint) {
             case EntryType.Workspace:
                 return this.getTreeForWorkspace(params);
@@ -193,10 +191,10 @@ export class DiscoveryService
             case EntryType.File:
                 return this.getTreeForFile(params);
         }
-        const stat = await fs.stat(fsPath);
-        if (stat.isDirectory()) {
+        const stat = await this.fs.stat(parsedUri);
+        if (stat.type === FileType.Directory) {
             return this.getTreeForDirectory(params);
-        } else if (stat.isFile()) {
+        } else if (stat.type === FileType.File) {
             return this.getTreeForFile(params);
         }
         return null;
@@ -205,7 +203,7 @@ export class DiscoveryService
     private async getTreeForWorkspace(params: GetTreeParams): Promise<WorkspaceEntry> {
         const entry = (await this.getTreeForDirectory(params)) as unknown as WorkspaceEntry;
         entry.type = EntryType.Workspace;
-        this.cache.set(params.uri, entry);
+        this.cache.set(params.uri.toString(true), entry);
         return entry;
     }
 
@@ -216,28 +214,28 @@ export class DiscoveryService
         ignoreCache,
     }: GetTreeParams): Promise<DirectoryEntry> {
         if (!ignoreCache) {
-            const cacheHit = this.getFromCache(uri, EntryType.Directory);
+            const cacheHit = this.getFromCache(uri.toString(true), EntryType.Directory);
             if (cacheHit) {
                 return cacheHit;
             }
         }
-        const entries = await fs.readdir(fsPath, { withFileTypes: true });
+        const entries = await this.fs.readDirectory(uri);
         const children = (
             await Promise.all(
-                entries.map((entry) => {
-                    if (entry.isFile()) {
-                        const entryPath = path.join(fsPath, entry.name);
+                entries.map(([name, type]) => {
+                    if (type === FileType.File) {
+                        const entryPath = path.join(fsPath, name);
                         if (this.isFsPathIgnored(entryPath) || !this.isFsPathSupported(entryPath)) {
                             return null;
                         }
-                        const entryUri = URI.file(entryPath).toString();
+                        const entryUri = URI.file(entryPath);
                         return this.getTreeForFile({ uri: entryUri, fsPath: entryPath, parentUri: uri });
-                    } else if (entry.isDirectory()) {
-                        const entryPath = path.join(fsPath, entry.name);
+                    } else if (type === FileType.Directory) {
+                        const entryPath = path.join(fsPath, name);
                         if (this.isFsPathIgnored(entryPath)) {
                             return null;
                         }
-                        const entryUri = URI.file(entryPath).toString();
+                        const entryUri = URI.file(entryPath);
                         return this.getTreeForDirectory({
                             uri: entryUri,
                             fsPath: entryPath,
@@ -248,35 +246,35 @@ export class DiscoveryService
             )
         ).filter((child) => child != null);
         const result: DirectoryEntry = {
-            uri,
-            parentUri,
+            uri: uri.toString(),
+            parentUri: parentUri?.toString(),
             type: EntryType.Directory,
             children,
         };
-        this.cache.set(uri, result);
+        this.cache.set(uri.toString(), result);
         return result;
     }
 
     private async getTreeForFile({ uri, parentUri, ignoreCache }: GetTreeParams): Promise<FileEntry> {
         if (!ignoreCache) {
-            const cacheHit = this.getFromCache(uri, EntryType.File);
+            const cacheHit = this.getFromCache(uri.toString(), EntryType.File);
             if (cacheHit) {
                 return cacheHit;
             }
         }
 
-        const document = await this.documentService.getOrCreate(uri);
+        const document = await this.documentService.getOrCreate(uri.toString());
         const parser = await this.parsers.get(document.languageId);
         const parseResult = await parser.parse(document);
         const result: FileEntry = {
-            uri,
-            parentUri,
+            uri: uri.toString(),
+            parentUri: parentUri?.toString(),
             type: EntryType.File,
             children: parseResult.matches
-                .map((match) => this.createRegexEntry(match, uri))
+                .map((match) => this.createRegexEntry(match, uri.toString()))
                 .sort((a, b) => compare(a, b)),
         };
-        this.cache.set(uri, result);
+        this.cache.set(uri.toString(), result);
         return result;
     }
 

@@ -25,6 +25,7 @@
     "dependencies": {
         "@gitlab/needle": "^1.5.1",
         "@regex-radar/lsp-types": "*",
+        "@regex-radar/parsers": "*",
         "recheck": "^4.5.0",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12",

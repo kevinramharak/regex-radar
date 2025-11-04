@@ -9,6 +9,8 @@ import { buildServiceProvider, createServiceCollection } from './di';
 import { DiagnosticsService } from './diagnostics';
 import { DiscoveryService } from './discovery';
 import { DocumentsService } from './documents';
+import { FileSystem } from './file-system';
+import { fileSystemProviders } from './file-system-provider';
 import { LifecycleHandler } from './lifecycle';
 import { Logger } from './logger';
 import { MessageHandler } from './message-handler';
@@ -18,23 +20,23 @@ const collection = createServiceCollection({
     connection: createConnection(ProposedFeatures.all),
     documents: new TextDocuments(TextDocument),
 });
-const provider = buildServiceProvider(collection, {
-    constructors: [
-        Connection,
-        LifecycleHandler,
-        MessageHandler,
-        Configuration,
-        Logger,
-        DiscoveryService,
-        DocumentsService,
-        ParserProvider,
-        DiagnosticsService,
-        CodeActionMessageHandler,
-        ...onCodeActionHandlers,
-        CodeLensMessageHandler,
-        ...onCodeLensHandlers,
-    ],
-});
+const provider = buildServiceProvider(collection, [
+    Connection,
+    LifecycleHandler,
+    MessageHandler,
+    Configuration,
+    Logger,
+    DiscoveryService,
+    DocumentsService,
+    ParserProvider,
+    DiagnosticsService,
+    CodeActionMessageHandler,
+    ...onCodeActionHandlers,
+    CodeLensMessageHandler,
+    ...onCodeLensHandlers,
+    FileSystem,
+    ...fileSystemProviders,
+]);
 
 // TODO: use dynamic registration (onInitialized), instead of static registration (onInitialize)
 

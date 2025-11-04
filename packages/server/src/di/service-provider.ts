@@ -6,6 +6,9 @@ import {
     ServiceIdentifier,
     ServiceProvider as _ServiceProvider,
     createInterfaceId,
+    type ConstructorServiceDescriptor,
+    type FactoryServiceDescriptor,
+    type InstanceServiceDescriptor,
 } from '@gitlab/needle';
 
 import { Disposable } from '../util/disposable';
@@ -56,16 +59,21 @@ export class ServiceProvider extends Disposable implements IServiceProvider {
     }
 }
 
+type DescriptorType = ServiceDescriptor['type'];
+const types: DescriptorType[] = ['Constructor', 'Factory', 'Instance'];
+
 export function buildServiceProvider(
     collection: ServiceCollection,
-    additions: Partial<{
-        descriptors: ServiceDescriptor[];
-        constructors: Constructor[];
-    }> = {},
+    descriptors: (ServiceDescriptor | Constructor)[],
 ): IServiceProvider {
     collection.addClass(ServiceProvider);
-    additions.descriptors?.forEach((descriptor) => collection.add(descriptor));
-    additions.constructors?.forEach((constructor) => collection.addClass(constructor));
+    descriptors.forEach((descriptor) => {
+        if ('type' in descriptor && types.includes(descriptor.type)) {
+            collection.add(descriptor);
+        } else {
+            collection.addClass(descriptor as Constructor);
+        }
+    });
     const validationResult = collection.validate();
     if (!validationResult.isValid) {
         throw new AggregateError(

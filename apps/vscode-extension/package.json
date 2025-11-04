@@ -13,6 +13,14 @@
         "directory": "apps/vscode-extension"
     },
     "homepage": "https://github.com/kevinramharak/regex-radar",
+    "bugs": {
+        "url": "https://github.com/kevinramharak/regex-radar/issues"
+    },
+    "sponsor": {
+        "url": "https://github.com/sponsors/kevinramharak"
+    },
+    "license": "SEE LICENCE IN LICENCE",
+    "qna": false,
     "regex-radar.trace.server": {
         "default": "verbose"
     },
@@ -32,6 +40,12 @@
         "Debuggers"
     ],
     "activationEvents": [],
+    "main": "./dist/extension.min.cjs",
+    "files": [
+        "dist/extension.min.cjs",
+        "assets/**/*",
+        "LICENSE"
+    ],
     "contributes": {
         "viewsContainers": {
             "activitybar": [
@@ -123,13 +137,6 @@
         },
         "commands": [
             {
-                "command": "regex-radar.test",
-                "enablement": "isDevelopment",
-                "icon": "$(code)",
-                "title": "Test Command",
-                "category": "Regex Radar"
-            },
-            {
                 "command": "regex-radar.tree-data-provider.refresh",
                 "enablement": "(view.regex-radar.regex-explorer.tree-view.visible || view.regex-radar.explorer.tree-view.visible)",
                 "icon": "$(refresh)",
@@ -159,12 +166,6 @@
             }
         ]
     },
-    "main": "./dist/extension.min.cjs",
-    "files": [
-        "dist/extension.min.cjs",
-        "assets/**/*",
-        "LICENSE"
-    ],
     "scripts": {
         "build": "node scripts/build.mjs",
         "dev": "node scripts/build.mjs --watch",

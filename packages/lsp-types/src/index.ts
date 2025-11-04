@@ -1,8 +1,5 @@
 import type * as lsp from 'vscode-languageserver-types';
 
-// TODO: remove this
-export { lsp };
-
 export type DiscoveryParams<T extends EntryType = EntryType> = {
     uri: lsp.URI;
     hint?: T;

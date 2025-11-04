@@ -103,7 +103,5 @@ export function registerTreeView(client: RegexRadarLanguageClient, context: vsco
             'regex-radar.tree-data-provider.reveal',
             createRevealCommandHandler(explorerTreeView, regexExplorerTreeView),
         ),
-        // TODO: remove this
-        vscode.commands.registerCommand('regex-radar.test', async (entry: RegexEntry) => {}),
     );
 }

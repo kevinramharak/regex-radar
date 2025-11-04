@@ -1,9 +1,10 @@
 import type { URI } from 'vscode-languageserver';
+import type { Range } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import type { Node, QueryCapture, QueryMatch } from 'web-tree-sitter';
 
-import { RegexMatch, RegexMatchType, lsp } from '@regex-radar/lsp-types';
+import { RegexMatch, RegexMatchType } from '@regex-radar/lsp-types';
 
 import { languageIdToLanguageName } from './language-id-to-language-name.js';
 import jsRegexDirectiveQuery from './queries/js/regex-directive.scm';
@@ -114,7 +115,7 @@ function getRegexMatchType(match: QueryMatch): RegexMatchType {
     return RegexMatchType.Unknown;
 }
 
-function createRangeFromNode(node: Node): lsp.Range {
+function createRangeFromNode(node: Node): Range {
     return {
         start: {
             line: node.startPosition.row,

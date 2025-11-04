@@ -5,11 +5,10 @@ import {
     type InitializeParams,
     type InitializeResult,
     type WorkspaceFoldersChangeEvent,
+    type URI,
 } from 'vscode-languageserver';
 
 import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
-
-import type { lsp } from '@regex-radar/lsp-types';
 
 import { EXTENSION_ID } from '../constants';
 import { IServiceProvider, LsConnection } from '../di';
@@ -56,8 +55,8 @@ const defaultConfigurationSchemaServer: ConfigurationSchemaServer = {
 };
 
 export interface IConfiguration {
-    get<T extends keyof ConfigurationSchema>(key: T, scope?: lsp.URI): Promise<ConfigurationSchema[T]>;
-    get<R>(key: string, scope?: lsp.URI): Promise<R>;
+    get<T extends keyof ConfigurationSchema>(key: T, scope?: URI): Promise<ConfigurationSchema[T]>;
+    get<R>(key: string, scope?: URI): Promise<R>;
 }
 
 export const IConfiguration = createInterfaceId<IConfiguration>('IConfiguration');
@@ -161,12 +160,12 @@ export class Configuration extends Disposable implements IConfiguration, IOnInit
 
     async get<T extends keyof ConfigurationSchema & string>(
         key: T,
-        scope?: lsp.URI,
+        scope?: URI,
     ): Promise<ConfigurationSchema[T]>;
-    async get<R>(key: string, scope?: lsp.URI): Promise<R>;
+    async get<R>(key: string, scope?: URI): Promise<R>;
     async get<T extends keyof ConfigurationSchema & string, R>(
         key: string,
-        scope?: lsp.URI,
+        scope?: URI,
     ): Promise<ConfigurationSchema[T] | R> {
         await this.fetching;
         return this.configuration[key as keyof ConfigurationSchema] as R;

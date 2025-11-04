@@ -1,8 +1,8 @@
 import * as path from 'node:path';
 
-import type { TextDocumentChangeEvent } from 'vscode-languageserver';
+import type { TextDocumentChangeEvent, URI } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
-import { URI } from 'vscode-uri';
+import { URI as _URI } from 'vscode-uri';
 
 import { Implements, Injectable, createInterfaceId } from '@gitlab/needle';
 
@@ -15,7 +15,6 @@ import {
     type FileEntry,
     type RegexEntry,
     type WorkspaceEntry,
-    type lsp,
 } from '@regex-radar/lsp-types';
 import type { RegexMatch } from '@regex-radar/lsp-types';
 
@@ -56,7 +55,7 @@ export class DiscoveryService
         IOnTextDocumentDidChangeHandler,
         IOnTextDocumentDidCloseHandler
 {
-    private cache = new Map<lsp.URI, CachableEntry>();
+    private cache = new Map<URI, CachableEntry>();
 
     /**
      * TODO: move to configuration
@@ -129,7 +128,7 @@ export class DiscoveryService
         return tree as DiscoveryResult<T>;
     }
 
-    private getFromCache<T extends EntryType>(uri: lsp.URI, hint?: T): CachableEntry<T> | null {
+    private getFromCache<T extends EntryType>(uri: URI, hint?: T): CachableEntry<T> | null {
         const cacheHit = this.cache.get(uri);
         if (cacheHit) {
             if (!hint || hint === cacheHit.type) {
@@ -141,8 +140,8 @@ export class DiscoveryService
         return null;
     }
 
-    private isUriIgnored(uri: lsp.URI): boolean {
-        const { scheme, fsPath } = URI.parse(uri);
+    private isUriIgnored(uri: URI): boolean {
+        const { scheme, fsPath } = _URI.parse(uri);
         switch (scheme) {
             case 'file': {
                 return this.isFsPathIgnored(fsPath);
@@ -152,7 +151,7 @@ export class DiscoveryService
     }
 
     /**
-     * `fsPath` should be normalized with `URI.parse().fsPath` or `path.normalize()`
+     * `fsPath` should be normalized with `_URI.parse().fsPath` or `path.normalize()`
      */
     private isFsPathIgnored(fsPath: string): boolean {
         const { dir, base, ext } = path.parse(fsPath);
@@ -173,12 +172,12 @@ export class DiscoveryService
         return DiscoveryService.SUPPORTED_FILE_EXTENSIONS.includes(extension);
     }
 
-    private async getTreeForUri(uri: lsp.URI, hint?: EntryType): Promise<Entry | null> {
+    private async getTreeForUri(uri: URI, hint?: EntryType): Promise<Entry | null> {
         const cacheHit = this.getFromCache(uri, hint);
         if (cacheHit) {
             return cacheHit;
         }
-        const parsedUri = URI.parse(uri);
+        const parsedUri = _URI.parse(uri);
         if (parsedUri.scheme !== 'file') {
             return null;
         }
@@ -278,7 +277,7 @@ export class DiscoveryService
         return result;
     }
 
-    private createRegexEntry(match: RegexMatch, uri: lsp.URI): RegexEntry {
+    private createRegexEntry(match: RegexMatch, uri: URI): RegexEntry {
         return {
             type: EntryType.Regex,
             location: {

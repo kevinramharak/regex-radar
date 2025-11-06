@@ -109,17 +109,21 @@ export class DiscoveryService
             return null;
         }
 
-        // TODO: ignore folders/files with no regex entries as decendants
         // TODO: handle parse errors, send previous result if any
         // TODO: workspaces should be monitored recursively for edits, managed documents should **NOT** be watched
         //       research if recursive watcher is more effecient than watching each file / directory on its own
         const tree = await this.getTreeForUri(uri, hint);
 
-        if (hint && (!tree || tree.type !== hint)) {
+        if (hint && tree?.type !== hint) {
             this.logger.trace(
                 `(discovery) request with hint ${EntryType[hint]} instead resolved to ${tree?.type ?? '<null>'}`,
             );
         }
+
+        if (tree) {
+            prune(tree);
+        }
+
         return tree as DiscoveryResult<T>;
     }
 
@@ -167,6 +171,7 @@ export class DiscoveryService
         return DiscoveryService.SUPPORTED_FILE_EXTENSIONS.includes(extension);
     }
 
+    // TODO: clean this chain, to much string conversions and inconsistencies
     private async getTreeForUri(uri: URI, hint?: EntryType): Promise<Entry | null> {
         const cacheHit = this.getFromCache(uri, hint);
         if (cacheHit) {
@@ -178,18 +183,27 @@ export class DiscoveryService
         }
         const params: GetTreeParams = { fsPath: parsedUri.fsPath, uri: parsedUri, ignoreCache: true };
         switch (hint) {
-            case EntryType.Workspace:
+            case EntryType.Workspace: {
                 return this.getTreeForWorkspace(params);
-            case EntryType.Directory:
+            }
+            case EntryType.Directory: {
                 return this.getTreeForDirectory(params);
-            case EntryType.File:
+            }
+            case EntryType.File: {
                 return this.getTreeForFile(params);
+            }
+            case EntryType.Regex: {
+                return null;
+            }
         }
         const stat = await this.fs.stat(parsedUri);
-        if (stat.type === FileType.Directory) {
-            return this.getTreeForDirectory(params);
-        } else if (stat.type === FileType.File) {
-            return this.getTreeForFile(params);
+        switch (stat.type) {
+            case FileType.Directory: {
+                return this.getTreeForDirectory(params);
+            }
+            case FileType.File: {
+                return this.getTreeForFile(params);
+            }
         }
         return null;
     }
@@ -197,7 +211,7 @@ export class DiscoveryService
     private async getTreeForWorkspace(params: GetTreeParams): Promise<WorkspaceEntry> {
         const entry = (await this.getTreeForDirectory(params)) as unknown as WorkspaceEntry;
         entry.type = EntryType.Workspace;
-        this.cache.set(params.uri.toString(true), entry);
+        this.cache.set(params.uri.toString(), entry);
         return entry;
     }
 
@@ -208,7 +222,7 @@ export class DiscoveryService
         ignoreCache,
     }: GetTreeParams): Promise<DirectoryEntry> {
         if (!ignoreCache) {
-            const cacheHit = this.getFromCache(uri.toString(true), EntryType.Directory);
+            const cacheHit = this.getFromCache(uri.toString(), EntryType.Directory);
             if (cacheHit) {
                 return cacheHit;
             }
@@ -241,7 +255,7 @@ export class DiscoveryService
         ).filter((child) => child != null);
         const result: DirectoryEntry = {
             uri: uri.toString(),
-            parentUri: parentUri?.toString(),
+            parentUri: ensureParentUri(uri, parentUri),
             type: EntryType.Directory,
             children,
         };
@@ -262,7 +276,7 @@ export class DiscoveryService
         const parseResult = await parser.parse(document);
         const result: FileEntry = {
             uri: uri.toString(),
-            parentUri: parentUri?.toString(),
+            parentUri: ensureParentUri(uri, parentUri),
             type: EntryType.File,
             children: parseResult.matches
                 .map((match) => this.createRegexEntry(match, uri.toString()))
@@ -284,7 +298,47 @@ export class DiscoveryService
     }
 }
 
-// TO
+function ensureParentUri(uri: _URI, parentUri?: _URI): string {
+    if (parentUri) {
+        return parentUri.toString();
+    }
+    const parentPath = path.dirname(uri.fsPath);
+    return _URI.file(parentPath).toString();
+}
+
+const isPruned = Symbol('isPruned');
+type IsPruned<T> = T & { [isPruned]: boolean };
+type IsPrunedEntry = IsPruned<Entry>;
+
+function prune<T extends Entry>(tree: T): T {
+    if ((tree as IsPrunedEntry)[isPruned]) {
+        return tree;
+    }
+    switch (tree.type) {
+        case EntryType.Workspace:
+        case EntryType.Directory: {
+            tree.children = tree.children
+                .map((child) => prune(child))
+                .filter((child) => hasRegexEntryDescendants(child));
+            break;
+        }
+        case EntryType.File:
+        case EntryType.Regex: {
+            break;
+        }
+    }
+    (tree as IsPrunedEntry)[isPruned] = true;
+    return tree;
+}
+
+function hasRegexEntryDescendants(entry: Exclude<Entry, WorkspaceEntry | RegexEntry>): boolean {
+    if (entry.type === EntryType.File) {
+        return entry.children.length > 0;
+    } else {
+        return entry.children.some((child) => hasRegexEntryDescendants(child));
+    }
+}
+
 function compare(a: RegexEntry, b: RegexEntry): number {
     const x = a.location.range;
     const y = b.location.range;

@@ -31,7 +31,7 @@
             ],
             // Enable this when (custom) webviews need to be availble through the debugger
             // "debugWebviews": true,
-            "cascadeTerminateToConfigurations": ["Attach to the language server"],
+            "cascadeTerminateToConfigurations": ["Attach to the Language Server"],
             "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         },
         {
@@ -49,7 +49,7 @@
             ],
             // Enable this when (custom) webviews need to be availble through the debugger
             // "debugWebviews": true,
-            "cascadeTerminateToConfigurations": ["Attach to the language server"],
+            "cascadeTerminateToConfigurations": ["Attach to the Language Server"],
             "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         },
         {
@@ -63,7 +63,7 @@
             ],
             // Enable this when (custom) webviews need to be availble through the debugger
             // "debugWebviews": true,
-            "cascadeTerminateToConfigurations": ["Attach to the language server"],
+            "cascadeTerminateToConfigurations": ["Attach to the Language Server"],
             "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         },
         {
@@ -74,11 +74,14 @@
             "type": "node",
             "request": "attach",
             "port": 6009,
-            "restart": false,
-            "cascadeTerminateToConfigurations": ["Run Extension", "Run Extension (all extensions disabled)"],
+            "restart": {
+                "delay": 1000,
+                "maxAttempts": 3
+            },
             "continueOnAttach": true,
             "autoAttachChildProcesses": true,
             "showAsyncStacks": true,
+            "cascadeTerminateToConfigurations": ["Run Extension", "Run Extension (all extensions disabled)"],
             "outFiles": ["${workspaceFolder}/**/dist/*.(m|c|)js", "!**/node_modules/**"]
         }
     ]

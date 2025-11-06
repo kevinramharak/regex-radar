@@ -162,17 +162,6 @@ export class CodeActionMessageHandler
             return handler.onCodeActionResolve(action, token);
         }, Promise.resolve(action));
     }
-
-    // private async ensureDiagnostics(params: CodeActionParams): Promise<Diagnostic[]> {
-    //     if (params.context.diagnostics.length > 0) {
-    //         return params.context.diagnostics;
-    //     }
-    //     const result = await this.diagnostics.onDiagnosticRequest(params);
-    //     if (result.kind === 'full') {
-    //         return result.items.filter((item) => isInRange(item.range, params.range));
-    //     }
-    //     return [];
-    // }
 }
 
 /**

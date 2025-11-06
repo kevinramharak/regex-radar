@@ -42,18 +42,16 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
     }
 
     constructor(private readonly client: RegexRadarLanguageClient) {
-        client.onDiscoveryDidChange(({ uri }: { uri: string }) => {
+        client.onDiscoveryDidChange(async ({ uri }: { uri: string }) => {
             let entry = this.entries.get(uri);
             if (!entry) {
-                logger.debug(`ignoring onDiscoveryDidChange event for: ${uri}, no entry found`);
                 return;
             }
-            logger.debug(`received onDiscoveryDidChange event for: ${entry.uri}`);
-            do {
-                logger.debug(`  - deleting entry for: ${uri}`);
-                this.entries.delete(uri);
-                entry = entry.parentUri ? this.entries.get(entry.parentUri) : void 0;
-            } while (entry);
+            this.clearEntryRecursively(entry);
+            const serverEntry = await this.client.discovery({ uri: entry.uri, hint: entry.type });
+            if (serverEntry) {
+                this.setEntryRecursively(serverEntry);
+            }
             this._onDidChangeTreeData.fire(entry);
         });
     }
@@ -89,6 +87,10 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
         if (entry.type === EntryType.Regex) {
             return [];
         }
+        const cachedEntry = this.entries.get(entry.uri);
+        if (cachedEntry?.children.length) {
+            return cachedEntry.children;
+        }
         const serverEntry = await this.client.discovery({ uri: entry.uri, hint: entry.type });
         switch (serverEntry?.type) {
             case EntryType.Workspace:
@@ -97,7 +99,7 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
                 if (this.workspaceMode === WorkspaceMode.One && this.rootUri === serverEntry.parentUri) {
                     delete serverEntry.parentUri;
                 }
-                this.entries.set(serverEntry.uri, serverEntry);
+                this.setEntryRecursively(serverEntry);
                 return serverEntry.children;
             }
             default:
@@ -155,6 +157,33 @@ export class RegexRadarTreeDataProvider implements vscode.TreeDataProvider<Entry
         }
         logger.warn('missing vsode.workspace.workspaceFolders');
         return [];
+    }
+
+    private setEntryRecursively(entry: Entry) {
+        if (entry.type !== EntryType.Regex) {
+            this.entries.set(entry.uri, entry);
+        }
+        switch (entry.type) {
+            case EntryType.Workspace:
+            case EntryType.Directory: {
+                entry.children.forEach((entry) => this.setEntryRecursively(entry));
+                break;
+            }
+        }
+    }
+
+    private clearEntryRecursively(entry: Entry) {
+        switch (entry.type) {
+            case EntryType.Workspace:
+            case EntryType.Directory:
+            case EntryType.File: {
+                this.entries.delete(entry.uri);
+                entry.children.forEach((entry) => this.clearEntryRecursively(entry));
+            }
+            case EntryType.Regex: {
+                break;
+            }
+        }
     }
 }
 

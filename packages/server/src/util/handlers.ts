@@ -9,12 +9,25 @@ import type { ILogger } from '../logger';
 import { resultOrCancellation } from './cancellation-promise';
 import type { MaybePromise } from './maybe';
 
+/**
+ * A helper function to run a collection of event handlers that all return a `MaybePromise<T[]>`.
+ * The results will be collected, until either all async handlers are done or a token cancellation was requested.
+ *
+ * TODO: maybe use object params, instead of 5 parameters
+ *
+ * @param handlers
+ * @param token
+ * @param workDone
+ * @param progress
+ * @param logger
+ * @returns
+ */
 export async function runHandlers<T>(
     handlers: (() => MaybePromise<T[]>)[],
     token?: CancellationToken,
     workDone?: WorkDoneProgressReporter,
     progress?: ResultProgressReporter<T[]>,
-    logger?: ILogger,
+    logger?: Pick<ILogger, 'thrown' | 'trace'>,
 ): Promise<T[]> {
     const results: T[] = [];
     const pending: Promise<T[]>[] = [];
@@ -47,6 +60,8 @@ export async function runHandlers<T>(
                     logger?.thrown(promise.reason);
                 }
             }
+        } else {
+            logger?.trace(`cancellation was requested`);
         }
     }
 

@@ -27,7 +27,7 @@
             "cwd": "${workspaceFolder}/apps/vscode-extension",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
-                "${workspaceFolder}/examples"
+                "${workspaceFolder}/fixture"
             ],
             // Enable this when (custom) webviews need to be availble through the debugger
             // "debugWebviews": true,
@@ -45,7 +45,7 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension",
-                "${workspaceFolder}/examples"
+                "${workspaceFolder}/fixture"
             ],
             // Enable this when (custom) webviews need to be availble through the debugger
             // "debugWebviews": true,

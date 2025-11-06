@@ -39,7 +39,10 @@
         "Other",
         "Debuggers"
     ],
-    "activationEvents": [],
+    "activationEvents": [
+        "onLanguage:javascript",
+        "onLanguage:typescript"
+    ],
     "main": "./dist/extension.min.cjs",
     "files": [
         "dist/extension.min.cjs",

@@ -40,4 +40,5 @@
     )
     (#eq? @regex.function "RegExp")
   ) @regex
+  ;; TODO: dynamic regex patterns and flags
 ]

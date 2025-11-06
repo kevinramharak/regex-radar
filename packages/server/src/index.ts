@@ -40,8 +40,6 @@ const provider = buildServiceProvider(collection, [
     ...fileSystemProviders,
 ]);
 
-// TODO: use dynamic registration (onInitialized), instead of static registration (onInitialize)
-
 /**
  *`connection` is considered the root of the server application, calling `.listen()` will bootstrap and start the server.
  */

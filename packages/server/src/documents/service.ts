@@ -57,8 +57,13 @@ export class DocumentsService extends Disposable implements IDocumentsService, I
     onInitialize(): InitializeResult['capabilities'] {
         return {
             textDocumentSync: {
-                change: TextDocumentSyncKind.Incremental,
                 openClose: true,
+                change: TextDocumentSyncKind.Incremental,
+                save: {
+                    includeText: false,
+                },
+                willSave: true,
+                willSaveWaitUntil: true,
             },
         };
     }

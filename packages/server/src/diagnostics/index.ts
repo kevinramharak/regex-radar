@@ -1,12 +1,8 @@
-import type { Constructor } from '../util/types';
+import type { Descriptor } from '../di/service-provider';
 
-import type { IOnDocumentDiagnostic, IOnWorkspaceDiagnostic } from './events';
-import { Linter } from './handlers/linter';
+import { LinterDiagnostic } from './handlers/linter';
 
-export { IOnDocumentDiagnostic, IOnWorkspaceDiagnostic } from './events';
-export { IDiagnosticsMessageHandler, DiagnosticsMessageHandler } from './message-handler';
+export * from './events';
+export * from './message-handler';
 
-export const onDiagnosticHandlers: (
-    | Constructor<IOnDocumentDiagnostic>
-    | Constructor<IOnWorkspaceDiagnostic>
-)[] = [Linter];
+export const onDiagnosticHandlers: Descriptor[] = [LinterDiagnostic];

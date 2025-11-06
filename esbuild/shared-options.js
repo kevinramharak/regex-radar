@@ -23,6 +23,7 @@ export const sharedOptions = {
      */
     target: 'node22.19',
     logLevel: 'info',
+    format: 'esm',
     /**
      * allows for analyzing the bundle
      * @see https://esbuild.github.io/analyze/
@@ -31,3 +32,14 @@ export const sharedOptions = {
     treeShaking: true,
     plugins: [workspacePackagesPlugin, scmImporterPlugin],
 };
+
+/**
+ * Because `vscode-languageserver` is distrubuted as commonjs, we need this banner to fix `require` calls.
+ * @see https://github.com/evanw/esbuild/issues/1921
+ * NOTE: only use this when bundling into a single file with `bundle: true`
+ */
+export const banner = `
+// topLevelCreateRequire is used to circumvent external dependencies being bundled as CJS instead of ESM
+import { createRequire as topLevelCreateRequire } from 'module';
+const require = topLevelCreateRequire(import.meta.url);
+`;

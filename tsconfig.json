@@ -7,6 +7,8 @@
         "emitDeclarationOnly": true,
         "declarationMap": true,
         "sourceMap": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
         "paths": {
             "@regex-radar/client": ["./packages/client/src"],
             "@regex-radar/server": ["./packages/server/src"],

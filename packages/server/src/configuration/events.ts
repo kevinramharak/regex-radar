@@ -2,7 +2,7 @@ import type { WorkspaceFoldersChangeEvent } from 'vscode-languageserver';
 
 import { createInterfaceId } from '@gitlab/needle';
 
-import type { ConfigurationSchema } from './index';
+import type { ConfigurationSchema } from './schema';
 
 export interface IOnDidChangeConfiguration {
     onDidChangeConfiguration(settings: ConfigurationSchema): void | Promise<void>;

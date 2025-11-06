@@ -1,5 +1,6 @@
+import { Language, Parser as TreeSitterParser } from 'web-tree-sitter';
+
 import { languageIdToLanguageName } from './language-id-to-language-name.js';
-import { Language, TreeSitterParser } from './web-tree-sitter.js';
 
 export class TreeSitterParserProvider {
     private cache = new Map<string, Promise<TreeSitterParser>>();
@@ -40,7 +41,7 @@ export class TreeSitterParserProvider {
                  * @see https://www.npmjs.com/package/web-tree-sitter/v/0.25.10#user-content-loading-the-wasm-file
                  */
                 locateFile() {
-                    return require.resolve('web-tree-sitter/tree-sitter.wasm');
+                    return import.meta.resolve('web-tree-sitter/tree-sitter.wasm');
                 },
             });
             this.treeSitterParserInitializePromise.catch((error) => console.error(error));

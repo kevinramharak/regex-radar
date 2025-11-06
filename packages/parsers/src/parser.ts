@@ -2,14 +2,19 @@ import type { URI } from 'vscode-languageserver';
 import type { Range } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
-import type { Node, QueryCapture, QueryMatch } from 'web-tree-sitter';
+import {
+    type Node,
+    type QueryCapture,
+    type QueryMatch,
+    Query as TreeSitterQuery,
+    type Parser as TreeSitterParser,
+} from 'web-tree-sitter';
 
 import { RegexMatch, RegexMatchType } from '@regex-radar/lsp-types';
 
 import { languageIdToLanguageName } from './language-id-to-language-name.js';
 import jsRegexDirectiveQuery from './queries/js/regex-directive.scm';
 import jsRegexQuery from './queries/js/regex.scm';
-import { type TreeSitterParser, TreeSitterQuery } from './web-tree-sitter';
 
 const jsQueries = [jsRegexQuery, jsRegexDirectiveQuery];
 

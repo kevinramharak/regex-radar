@@ -5,7 +5,7 @@
     "publisher": "kevinramharak",
     "description": "The Regex Radar extension for vscode",
     "version": "0.1.0",
-    "type": "commonjs",
+    "type": "module",
     "icon": "assets/icon.png",
     "repository": {
         "type": "git",
@@ -43,9 +43,9 @@
         "onLanguage:javascript",
         "onLanguage:typescript"
     ],
-    "main": "./dist/extension.min.cjs",
+    "main": "./dist/extension.min.js",
     "files": [
-        "dist/extension.min.cjs",
+        "dist/extension.min.js",
         "assets/**/*",
         "LICENSE"
     ],
@@ -166,9 +166,9 @@
         ]
     },
     "scripts": {
-        "build": "node scripts/build.mjs",
-        "dev": "node scripts/build.mjs --watch",
-        "build:production": "node scripts/build.mjs --production",
+        "build": "node scripts/build.js",
+        "dev": "node scripts/build.js --watch",
+        "build:production": "node scripts/build.js --production",
         "package": "vsce package",
         "tsc": "tsc -p .",
         "clean": "rm -r dist/"

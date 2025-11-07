@@ -137,6 +137,7 @@ export class DiagnosticsMessageHandler
     ): Promise<WorkspaceDiagnosticReport> {
         // TODO: onWorkspaceDiagnosticsRequests can be a constantly open & streaming request
         //       if the request is closed, the client might start the request again immediatly
+        // see: https://github.com/microsoft/vscode-languageserver-node/issues/1669
         return {
             items: [],
         };

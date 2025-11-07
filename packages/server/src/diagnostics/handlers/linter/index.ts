@@ -26,6 +26,12 @@ const messages: Record<Code, string> = {
     'prefer-regex-literals': `Use a regular expression literal instead of the 'RegExp' constructor.`,
 };
 
+function getEnabledRules(rules: LinterRulesConfigurationSchema): Code[] {
+    return Object.entries(rules)
+        .filter(([_, isEnabled]) => isEnabled)
+        .map(([name]) => name as Code);
+}
+
 // TODO: implement suppressions
 // see: https://eslint.org/docs/latest/use/configure/rules#disabling-rules
 @Implements(IOnDocumentDiagnostic)
@@ -41,10 +47,12 @@ export class LinterDiagnostic implements IOnDocumentDiagnostic {
         token?: CancellationToken,
     ): Promise<Diagnostic[]> {
         const configuration = await this.configuration.get('regex-radar.diagnostics');
-        const enabled = Object.entries(configuration.linter)
-            .filter(([_, isEnabled]) => isEnabled)
-            .map(([name]) => name);
-        if (!enabled.length || token?.isCancellationRequested) {
+        if (!configuration.linter.enabled || token?.isCancellationRequested) {
+            return [];
+        }
+
+        const enabled = getEnabledRules(configuration.linter.rules);
+        if (!enabled.length) {
             return [];
         }
 

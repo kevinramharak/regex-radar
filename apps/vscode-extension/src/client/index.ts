@@ -1,15 +1,13 @@
 import * as path from 'node:path';
 
-import * as vscode from 'vscode';
+import { ExtensionContext, ExtensionMode } from 'vscode';
 import { type ServerOptions, TransportKind } from 'vscode-languageclient/node';
 
 import { RegexRadarLanguageClient } from '@regex-radar/client';
 
 let client: RegexRadarLanguageClient | null = null;
 
-export async function registerLanguageClient(
-    context: vscode.ExtensionContext,
-): Promise<RegexRadarLanguageClient> {
+export async function registerLanguageClient(context: ExtensionContext): Promise<RegexRadarLanguageClient> {
     if (client) {
         return client;
     }
@@ -26,10 +24,10 @@ export async function registerLanguageClient(
     return client;
 }
 
-function createLanguageClient(context: vscode.ExtensionContext): RegexRadarLanguageClient {
+function createLanguageClient(context: ExtensionContext): RegexRadarLanguageClient {
     // TODO: figure out how to bundle the server, as part of the extension
     const serverModulePath =
-        context.extensionMode === vscode.ExtensionMode.Production
+        context.extensionMode === ExtensionMode.Production
             ? path.join('dist/server.min.js')
             : path.join('..', '..', 'packages', 'server', 'dist', 'server.js');
     const serverModule = context.asAbsolutePath(serverModulePath);

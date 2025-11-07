@@ -27,16 +27,7 @@ async function main() {
     if (isWatch) {
         await ctx.watch();
     } else {
-        const result = await ctx.rebuild();
-        if (result.metafile) {
-            const metaFilePath = 'dist/metafile.json';
-            await writeFile(metaFilePath, JSON.stringify(result.metafile, null, 2), {
-                encoding: 'utf-8',
-            });
-            console.log(
-                `generated metafile at: ${metaFilePath}, use https://esbuild.github.io/analyze/ to analyze the bundle`,
-            );
-        }
+        await ctx.rebuild();
         await ctx.dispose();
     }
 }

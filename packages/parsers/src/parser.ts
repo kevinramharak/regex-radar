@@ -1,5 +1,4 @@
-import type { URI } from 'vscode-languageserver';
-import type { Range } from 'vscode-languageserver';
+import type { URI, Range } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {

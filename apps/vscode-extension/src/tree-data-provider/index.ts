@@ -1,4 +1,12 @@
-import * as vscode from 'vscode';
+import {
+    Uri,
+    type TreeViewOptions,
+    type TreeView,
+    type ExtensionContext,
+    window,
+    commands,
+    workspace,
+} from 'vscode';
 
 import { RegexRadarLanguageClient } from '@regex-radar/client';
 import { Entry, RegexEntry } from '@regex-radar/lsp-types';
@@ -26,8 +34,8 @@ function createParams(entry: RegexEntry): Record<string, string> {
     return params;
 }
 
-function createRegExrUri(entry: RegexEntry): vscode.Uri {
-    return vscode.Uri.from({
+function createRegExrUri(entry: RegexEntry): Uri {
+    return Uri.from({
         scheme: 'https',
         authority: 'regexr.com',
         path: '/',
@@ -35,8 +43,8 @@ function createRegExrUri(entry: RegexEntry): vscode.Uri {
     });
 }
 
-function createRegex101Uri(entry: RegexEntry): vscode.Uri {
-    return vscode.Uri.from({
+function createRegex101Uri(entry: RegexEntry): Uri {
+    return Uri.from({
         scheme: 'https',
         authority: 'regex101.com',
         path: '/',
@@ -44,25 +52,22 @@ function createRegex101Uri(entry: RegexEntry): vscode.Uri {
     });
 }
 
-function createTreeViewOptions(provider: RegexRadarTreeDataProvider): vscode.TreeViewOptions<Entry> {
+function createTreeViewOptions(provider: RegexRadarTreeDataProvider): TreeViewOptions<Entry> {
     return {
         treeDataProvider: provider,
         showCollapseAll: true,
     };
 }
 
-function createTreeViews(options: vscode.TreeViewOptions<Entry>) {
-    const explorerTreeView = vscode.window.createTreeView('regex-radar.explorer.tree-view', options);
-    const regexExplorerTreeView = vscode.window.createTreeView(
-        'regex-radar.regex-explorer.tree-view',
-        options,
-    );
+function createTreeViews(options: TreeViewOptions<Entry>) {
+    const explorerTreeView = window.createTreeView('regex-radar.explorer.tree-view', options);
+    const regexExplorerTreeView = window.createTreeView('regex-radar.regex-explorer.tree-view', options);
     return { explorerTreeView, regexExplorerTreeView };
 }
 
 function createRevealCommandHandler(
-    explorerTreeView: vscode.TreeView<Entry>,
-    regexExplorerTreeView: vscode.TreeView<Entry>,
+    explorerTreeView: TreeView<Entry>,
+    regexExplorerTreeView: TreeView<Entry>,
 ) {
     return async (entry: RegexEntry) => {
         const options = {
@@ -77,29 +82,25 @@ function createRevealCommandHandler(
     };
 }
 
-export function registerTreeView(client: RegexRadarLanguageClient, context: vscode.ExtensionContext) {
+export function registerTreeView(client: RegexRadarLanguageClient, context: ExtensionContext) {
     const treeDataProvider = new RegexRadarTreeDataProvider(client);
     const options = createTreeViewOptions(treeDataProvider);
     const { explorerTreeView, regexExplorerTreeView } = createTreeViews(options);
 
     context.subscriptions.push(explorerTreeView, regexExplorerTreeView);
     context.subscriptions.push(
-        vscode.commands.registerCommand('regex-radar.tree-data-provider.refresh', () =>
-            treeDataProvider.refresh(),
-        ),
-        vscode.workspace.onDidChangeWorkspaceFolders((event) => treeDataProvider.refresh()),
+        commands.registerCommand('regex-radar.tree-data-provider.refresh', () => treeDataProvider.refresh()),
+        workspace.onDidChangeWorkspaceFolders((event) => treeDataProvider.refresh()),
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('regex-radar.tree-data-provider.openInRegExr', (entry: RegexEntry) =>
-            vscode.commands.executeCommand('vscode.open', createRegExrUri(entry).toString(true)),
+        commands.registerCommand('regex-radar.tree-data-provider.openInRegExr', (entry: RegexEntry) =>
+            commands.executeCommand('vscode.open', createRegExrUri(entry).toString(true)),
         ),
-        vscode.commands.registerCommand(
-            'regex-radar.tree-data-provider.openInRegex101',
-            (entry: RegexEntry) =>
-                vscode.commands.executeCommand('vscode.open', createRegex101Uri(entry).toString(true)),
+        commands.registerCommand('regex-radar.tree-data-provider.openInRegex101', (entry: RegexEntry) =>
+            commands.executeCommand('vscode.open', createRegex101Uri(entry).toString(true)),
         ),
-        vscode.commands.registerCommand(
+        commands.registerCommand(
             'regex-radar.tree-data-provider.reveal',
             createRevealCommandHandler(explorerTreeView, regexExplorerTreeView),
         ),

@@ -32,5 +32,9 @@
     },
     "devDependencies": {
         "esbuild": "^0.25.12"
+    },
+    "imports": {
+        "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
+        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm"
     }
 }

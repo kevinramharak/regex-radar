@@ -2,6 +2,7 @@
 // import { esbuildProblemMatcherPlugin } from "./plugins/problem-matcher-plugin.js";
 import { scmImporterPlugin } from './plugins/scm-importer-plugin.js';
 import { workspacePackagesPlugin } from './plugins/workspace-packages-plugin.js';
+import { writeMetaFilePlugin } from './plugins/write-meta-file-plugin.js';
 
 const isProduction = process.argv.includes('--production');
 const isWatch = process.argv.includes('--watch');
@@ -24,13 +25,8 @@ export const sharedOptions = {
     target: 'node22.19',
     logLevel: 'info',
     format: 'esm',
-    /**
-     * allows for analyzing the bundle
-     * @see https://esbuild.github.io/analyze/
-     */
-    metafile: enableMetaFile,
     treeShaking: true,
-    plugins: [workspacePackagesPlugin, scmImporterPlugin],
+    plugins: [workspacePackagesPlugin, scmImporterPlugin, writeMetaFilePlugin(enableMetaFile)],
 };
 
 /**

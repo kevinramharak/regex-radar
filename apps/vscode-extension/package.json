@@ -47,7 +47,9 @@
     "files": [
         "dist/extension.min.js",
         "dist/server.min.js",
-        "assets/**/*",
+        "dist/wasm/*.wasm",
+        "dist/wasm/package.json",
+        "assets/icon.png",
         "LICENSE"
     ],
     "contributes": {

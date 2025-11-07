@@ -7,7 +7,6 @@
     "version": "0.1.0",
     "type": "module",
     "main": "./dist/index.js",
-    "browser": "./dist/index.browser.js",
     "types": "./dist/index.d.ts",
     "repository": {
         "type": "git",
@@ -28,9 +27,15 @@
         "tree-sitter-cli": "^0.25.10",
         "tree-sitter-javascript": "^0.25.0",
         "tree-sitter-json": "^0.24.8",
-        "tree-sitter-typescript": "^0.23.2"
+        "tree-sitter-typescript": "^0.23.2",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12"
     },
     "dependencies": {
         "web-tree-sitter": "^0.25.10"
+    },
+    "imports": {
+        "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
+        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm"
     }
 }

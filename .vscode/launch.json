@@ -73,7 +73,7 @@
             "name": "Attach to the Language Server",
             "type": "node",
             "request": "attach",
-            "port": 6009,
+            "port": 9229,
             "restart": {
                 "delay": 1000,
                 "maxAttempts": 3

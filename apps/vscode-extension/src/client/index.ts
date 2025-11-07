@@ -26,7 +26,6 @@ export async function registerLanguageClient(context: ExtensionContext): Promise
 
 /**
  * Local copy to avoid having to import the whole package
- * TODO: tree-shakable would remove this need
  */
 const TransportKind: typeof import('vscode-languageclient/node').TransportKind = {
     stdio: 0,
@@ -50,7 +49,7 @@ function createLanguageClient(context: ExtensionContext): RegexRadarLanguageClie
         debug: {
             module: serverModule,
             transport: TransportKind.ipc,
-            options: { execArgv: ['--nolazy', '--inspect=6009', '--inspect-brk'] },
+            options: { execArgv: ['--nolazy', '--inspect=9229', '--inspect-brk'] },
         },
     };
 

@@ -7,6 +7,7 @@ import { Configuration } from './configuration';
 import { Connection, IConnection } from './connection';
 import { buildServiceProvider, createServiceCollection } from './di';
 import { DiagnosticsMessageHandler, onDiagnosticHandlers } from './diagnostics';
+import { DiagnosticService } from './diagnostics/service';
 import { DiscoveryRequestMessageHandler, DiscoveryService } from './discovery';
 import { DocumentsService } from './documents';
 import { FileSystem } from './file-system';
@@ -30,6 +31,7 @@ const provider = buildServiceProvider(collection, [
     DiscoveryRequestMessageHandler,
     DiscoveryService,
     DocumentsService,
+    DiagnosticService,
     ParserProvider,
     DiagnosticsMessageHandler,
     RedosCheckService,

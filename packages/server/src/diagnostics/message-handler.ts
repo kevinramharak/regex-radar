@@ -143,5 +143,6 @@ export class DiagnosticsMessageHandler
         };
     }
 
+    // TODO: move refresh functionality to the diagnostics service
     refresh: IDiagnosticsMessageHandler['refresh'];
 }

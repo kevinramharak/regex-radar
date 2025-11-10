@@ -67,7 +67,7 @@ const catastrophicURL = /(https?:\/\/(w{3}\.)?)+[a-zA-Z0-9\-]+\.[a-z]+(\/[^\s]*)
 /**
  * @regex
  */
-const treatAsRegex = '/some_regex_pattern_string/';
-const alsoTreatAsRegex = /** @regex */ '/some_regex_pattern_string/';
+const treatAsRegex = 'some_regex_pattern_string';
+const alsoTreatAsRegex = /** @regex */ 'some_regex_pattern_string';
 
 export {};

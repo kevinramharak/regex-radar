@@ -93,6 +93,7 @@ export class DocumentsService extends Disposable implements IDocumentsService, I
             }),
         ];
 
+        // TODO: figure out how to dynamically register this properly
         if (synchronizationOptions.didSave) {
         }
         if (synchronizationOptions.willSave) {
@@ -158,8 +159,8 @@ export class DocumentsService extends Disposable implements IDocumentsService, I
         this.disposables.push(this.documents.listen(connection));
     }
 
-    get(uri: DocumentUri): TextDocument | null {
-        return this.documents.get(uri) ?? null;
+    get(uri: DocumentUri): TextDocument | undefined {
+        return this.documents.get(uri);
     }
 
     /**

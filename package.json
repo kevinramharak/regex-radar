@@ -29,6 +29,7 @@
         "@local/vscode-languageserver-protocol": "file:../vscode-languageserver-node/protocol",
         "@local/vscode-jsonrpc": "file:../vscode-languageserver-node/jsonrpc",
         "@local/vscode-languageclient": "file:../vscode-languageserver-node/client",
-        "@local/vscode-languageserver": "file:../vscode-languageserver-node/server"
+        "@local/vscode-languageserver": "file:../vscode-languageserver-node/server",
+        "@local/recheck": "file:../recheck/packages/recheck"
     }
 }

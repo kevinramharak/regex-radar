@@ -5,7 +5,6 @@
 ## tasks
 
 - [ ] file watchers
-- [ ] either inline or write a custom resolver for the wasm files
 - [ ] different bundle for web
 - [ ] detect implicit regexes
 - [ ] comment directive support

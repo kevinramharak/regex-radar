@@ -2,11 +2,16 @@ import type { CancellationToken } from 'vscode-languageserver';
 
 import { Injectable, createInterfaceId } from '@gitlab/needle';
 
+// TODO: fix these .d.ts files
+import * as native from '@local/recheck/core/backend/native';
+import { createCheck } from '@local/recheck/core/builder';
 import {
-    check,
-    VulnerableDiagnostics as VulnerableRecheckDiagnostics,
+    type VulnerableDiagnostics as VulnerableRecheckDiagnostics,
     type Diagnostics as RecheckDiagnostics,
+    type check,
 } from 'recheck';
+
+import { ILogger } from '../logger';
 
 type CheckParam = {
     pattern: string;
@@ -17,8 +22,12 @@ type QueueParam = CheckParam & {
     token?: CancellationToken;
 };
 
+type CheckResult =
+    | { sync: true; diagnostics: RecheckDiagnostics }
+    | { sync: false; promise: Promise<RecheckDiagnostics> };
+
 export interface IRedosCheckService {
-    check(param: CheckParam): VulnerableRecheckDiagnostics | undefined;
+    check(param: CheckParam): CheckResult;
     queue(param: QueueParam): Promise<RecheckDiagnostics>;
 }
 
@@ -27,7 +36,7 @@ export const IRedosCheckService = createInterfaceId<IRedosCheckService>('IRedosC
 // TODO: runtime, scala jvm, scala.js, webworker?
 // TODO: event emitter, push diagnostics
 
-@Injectable(IRedosCheckService, [])
+@Injectable(IRedosCheckService, [ILogger])
 export class RedosCheckService implements IRedosCheckService {
     /**
      * Use a queue to only have a single check running at a time
@@ -36,24 +45,49 @@ export class RedosCheckService implements IRedosCheckService {
     /**
      * TODO: LRU cache, persistent cache between sessions.
      */
-    private cache = new Map<string, VulnerableRecheckDiagnostics>();
+    private cache = new Map<string, RecheckDiagnostics>();
 
-    check(param: CheckParam): VulnerableRecheckDiagnostics | undefined {
-        const hit = this.cache.get(`/${param.pattern}/${param.flags}`);
-        if (hit) {
-            return hit;
+    constructor(private readonly logger: ILogger) {}
+
+    check(param: CheckParam): CheckResult {
+        const diagnostics = this.cache.get(`/${param.pattern}/${param.flags}`);
+        if (diagnostics) {
+            return {
+                sync: true,
+                diagnostics,
+            };
+        } else {
+            return {
+                sync: false,
+                promise: this.queue(param),
+            };
         }
-        this.queue(param);
     }
 
+    private _check: typeof check | undefined;
+    private async getCheck(): Promise<typeof check> {
+        if (!this._check) {
+            this._check = await createCheck(native);
+        }
+        return this._check!;
+    }
+
+    /**
+     * TODO: maybe recheck already has a queue, or can do this in parallel anyway?
+     *       do we need a queue?
+     */
     async queue(param: QueueParam): Promise<RecheckDiagnostics> {
         // update the queue, keep a reference to the promise
+        const check = await this.getCheck();
         const promise = ((this.pending as Promise<RecheckDiagnostics>) = this.pending.then(async () => {
+            const start = performance.now();
             const result = await check(param.pattern, param.flags ?? '');
-            if (result.status === 'vulnerable') {
-                // if its a vulnerable regex, cache the result
-                this.cache.set(`/${param.pattern}/${param.flags}`, result);
-            }
+            const end = performance.now();
+            const duration = end - start;
+            this.logger.debug(
+                `redos check '/${param.pattern}/${param.flags ?? ''}' took ${duration.toFixed(2)}ms`,
+            );
+            this.cache.set(`/${param.pattern}/${param.flags}`, result);
             return result;
         }));
         // return the promise that will eventually resolve to a diagnostics

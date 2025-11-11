@@ -3,7 +3,7 @@
     "private": true,
     "displayName": "Regex Radar",
     "publisher": "regex-radar",
-    "description": "A toolkit for developing & maintaining Regular Expressions powered by the Language Service Protocol",
+    "description": "Workspace-aware regex exploration, testing, and safety analysis powered by the Language Server Protocol.",
     "version": "0.1.0",
     "scripts": {
         "build": "node scripts/build.js",
@@ -28,7 +28,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/kevinramharak/regex-radar",
+        "url": "https://github.com/kevinramharak/regex-radar.git",
         "directory": "apps/vscode-extension"
     },
     "homepage": "https://github.com/kevinramharak/regex-radar",
@@ -37,6 +37,10 @@
     },
     "sponsor": {
         "url": "https://github.com/sponsors/kevinramharak"
+    },
+    "galleryBanner": {
+        "color": "#fdf7ec",
+        "theme": "light"
     },
     "license": "SEE LICENCE IN LICENCE",
     "qna": false,
@@ -58,14 +62,27 @@
     "vsce": {
         "dependencies": false
     },
+    "keywords": [
+        "analysis",
+        "regex",
+        "RegExp",
+        "RegExr",
+        "Regex101",
+        "regular expression",
+        "ReDoS",
+        "Regular Expression DOS",
+        "Regular Expression Denial of Service",
+        "Denial of Service",
+        "security",
+        "vulnerable",
+        "lint",
+        "linter",
+        "lsp"
+    ],
     "categories": [
         "Linters",
-        "Visualization",
-        "Testing",
-        "Education",
         "Programming Languages",
-        "Other",
-        "Debuggers"
+        "Other"
     ],
     "activationEvents": [
         "onLanguage:javascript",

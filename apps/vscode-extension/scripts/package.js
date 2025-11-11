@@ -104,7 +104,7 @@ async function main(...args) {
     contents = await readFile(packageJsonPath, { encoding: 'utf-8' });
     const isPreRelease = args.includes('--pre-release');
     try {
-        // await ensureReadmeIsCopied();
+        await ensureReadmeIsCopied();
         await ensureServerWasmFilesAreCopied();
         await ensureWorkerFilesAreCopied();
         await ensureServerModuleIsCopied();

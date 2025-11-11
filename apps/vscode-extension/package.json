@@ -3,7 +3,7 @@
     "private": true,
     "displayName": "Regex Radar",
     "publisher": "regex-radar",
-    "description": "A toolkit for developing & maintaining Regular Expressions powered by a LSP Server",
+    "description": "Workspace-aware regex exploration, testing, and safety analysis powered by the Language Server Protocol.",
     "version": "0.1.0",
     "scripts": {
         "build": "node scripts/build.js",
@@ -63,6 +63,7 @@
         "dependencies": false
     },
     "keywords": [
+        "analysis",
         "regex",
         "RegExp",
         "RegExr",
@@ -75,7 +76,8 @@
         "security",
         "vulnerable",
         "lint",
-        "linter"
+        "linter",
+        "lsp"
     ],
     "categories": [
         "Linters",

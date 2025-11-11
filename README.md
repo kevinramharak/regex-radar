@@ -63,7 +63,7 @@ Available on the VS Code Marketplace as [Regex Radar](https://marketplace.visual
 ## Getting Started
 
 1. Install the extension
-2. Linter and ReDoS checking will happen automatically, diagnostics will be shown in the VS Code interface.
+2. Linter and ReDoS checking will run in the background, diagnostics will be shown in the VS Code interface.
 3. Open the Regex Explorer pane in the Explorer panel or use the Regex Explorer panel. (screenshots to follow).
 4. Click on a regular expression to find it in your source code.
 5. Use the context menu (right click) to open the regex in an external tool.

@@ -57,7 +57,7 @@ Enable or disable analysis behaviors to fine-tune the extension to your developm
 
 Available on the VS Code Marketplace as [Regex Radar](https://marketplace.visualstudio.com/items?itemName=regex-radar.regex-radar) or in your VS Code editor in the Extensions panel as "Regex Radar".
 
-> [!WARN]
+> [!WARNING]
 > Currently released `0.1.x` versions are considered (pre-)alpha releases and not guarrenteed to work without issues.
 
 ## Getting Started

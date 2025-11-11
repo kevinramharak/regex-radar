@@ -32,7 +32,7 @@
 
 ## ⚙️ Core Concept
 
-A Regex Intelligence Tooling extension — a VS Code + Language Server combo that:
+A toolkit for developing & maintaining Regular Expressions powered by the Language Service Protocol:
 
 - Detects regex literals and constructor calls in your code.
 - Indexes and lists them in a sidebar.

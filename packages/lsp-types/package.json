@@ -2,7 +2,7 @@
     "name": "@regex-radar/lsp-types",
     "private": true,
     "displayName": "Regex Radar Language Server Protocol types",
-    "publisher": "Kevin Ramharak",
+    "publisher": "regex-radar",
     "description": "The Language Server Protocol Types for Regex Radar",
     "version": "0.1.0",
     "type": "module",

@@ -1,8 +1,9 @@
 {
     "name": "@regex-radar/monorepo",
+    "description": "A toolkit for developing & maintaining Regular Expressions powered by the Language Service Protocol",
     "private": true,
     "packageManager": "npm@11.3.0",
-    "license": "MIT",
+    "license": "SEE LICENCE IN LICENCE",
     "type": "module",
     "engines": {
         "node": ">= 24"
@@ -30,6 +31,7 @@
         "@trivago/prettier-plugin-sort-imports": "^6.0.0",
         "@tsconfig/recommended": "^1.0.12",
         "eslint": "^9.39.1",
+        "eslint-plugin-package-json": "^0.65.3",
         "globals": "^16.5.0",
         "jiti": "^2.6.1",
         "prettier": "^3.6.2",

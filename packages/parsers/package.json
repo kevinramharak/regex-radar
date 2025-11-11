@@ -2,7 +2,7 @@
     "name": "@regex-radar/parsers",
     "private": true,
     "displayName": "Regex Radar Parsers",
-    "publisher": "Kevin Ramharak",
+    "publisher": "regex-radar",
     "description": "The Parsers used by Regex Radar",
     "version": "0.1.0",
     "type": "module",

@@ -3,7 +3,7 @@ import type { CancellationToken } from 'vscode-languageserver';
 import { Injectable, createInterfaceId } from '@gitlab/needle';
 
 // TODO: fix these .d.ts files
-import * as native from '@local/recheck/core/backend/native';
+import * as backend from '@local/recheck/core/backend/thread-worker';
 import { createCheck } from '@local/recheck/core/builder';
 import { type Diagnostics as RecheckDiagnostics, type check } from 'recheck';
 
@@ -63,7 +63,8 @@ export class RedosCheckService implements IRedosCheckService {
     private _check: typeof check | undefined;
     private async getCheck(): Promise<typeof check> {
         if (!this._check) {
-            this._check = await createCheck(native);
+            const workerPath = import.meta.resolve('#workers/recheck/thread.worker');
+            this._check = await createCheck(backend, workerPath);
         }
         return this._check!;
     }

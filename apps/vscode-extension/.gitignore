@@ -1,0 +1,3 @@
+
+# never commit any secrets to the git repo
+.secrets

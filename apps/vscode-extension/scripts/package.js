@@ -56,6 +56,16 @@ async function ensureServerWasmFilesAreCopied() {
     ]);
 }
 
+const workerPath = path.resolve(nodeModulesPath, '@local', 'recheck', 'lib', 'thread.worker.js');
+const workerDestinationPath = path.resolve(distDirectoryPath, 'workers', 'recheck');
+
+async function ensureWorkerFilesAreCopied() {
+    console.log('copying .worker files:');
+    console.log(`  - ${workerPath}`);
+    await mkdir(workerDestinationPath, { recursive: true });
+    await copyFile(workerPath, path.join(workerDestinationPath, 'thread.worker.js'));
+}
+
 /**
  * @param {string} contents
  */
@@ -74,6 +84,7 @@ async function patchPackageJson(contents) {
     json['imports'] = {
         '#wasm/tree-sitter.wasm': './dist/wasm/tree-sitter.wasm',
         '#wasm/grammars/*.wasm': './dist/wasm/*.wasm',
+        '#workers/recheck/thread.worker': './dist/workers/recheck/thread.worker.js',
     };
     const patchedContents = JSON.stringify(json, null, 4);
     await writeFile(packageJsonPath, patchedContents);
@@ -86,14 +97,16 @@ let contents = '';
 
 /**
  * A custom `vsce package` script, to support patching `package.json` manifest
- * @param {string[]} _args
+ * @param {string[]} args
  * @returns {Promise<number>}
  */
-async function main(..._args) {
+async function main(...args) {
     contents = await readFile(packageJsonPath, { encoding: 'utf-8' });
+    const isPreRelease = args.includes('--pre-release');
     try {
-        await ensureReadmeIsCopied();
+        // await ensureReadmeIsCopied();
         await ensureServerWasmFilesAreCopied();
+        await ensureWorkerFilesAreCopied();
         await ensureServerModuleIsCopied();
         await patchPackageJson(contents);
         // package extension
@@ -103,6 +116,7 @@ async function main(..._args) {
             packagePath: distDirectoryPath,
             // NOTE: because `vsce` is a buggy and undocumented mess, this has to be a relative path, but without using `./` or `../`
             readmePath: 'dist/README.md',
+            preRelease: isPreRelease,
         });
     } catch (error) {
         console.error(error);

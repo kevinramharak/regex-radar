@@ -2,7 +2,7 @@
     "name": "@regex-radar/client",
     "private": true,
     "displayName": "Regex Radar Language Server Client",
-    "publisher": "Kevin Ramharak",
+    "publisher": "regex-radar",
     "description": "The Language Server Client for Regex Radar",
     "version": "0.1.0",
     "type": "module",

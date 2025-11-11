@@ -2,11 +2,30 @@
     "name": "regex-radar",
     "private": true,
     "displayName": "Regex Radar",
-    "publisher": "kevinramharak",
-    "description": "The Regex Radar extension for vscode",
+    "publisher": "regex-radar",
+    "description": "A toolkit for developing & maintaining Regular Expressions powered by the Language Service Protocol",
     "version": "0.1.0",
-    "type": "module",
-    "icon": "assets/icon.png",
+    "scripts": {
+        "build": "node scripts/build.js",
+        "dev": "node scripts/build.js --watch",
+        "build:production": "node scripts/build.js --production",
+        "package": "node scripts/package.js",
+        "publish": "node scripts/publish.js",
+        "tsc": "tsc -p .",
+        "clean": "rm -r dist/",
+        "vscode:install-extension": "code --install-extension ./dist/regex-radar-*.vsix",
+        "vscode:uninstall-extension": "code --uninstall-extension regex-radar.regex-radar"
+    },
+    "devDependencies": {
+        "@types/node": "^22.18.13",
+        "@types/vscode": "^1.105.0",
+        "@vscode/vsce": "^3.6.2",
+        "esbuild": "^0.25.12"
+    },
+    "dependencies": {
+        "@regex-radar/client": "*",
+        "vscode-languageclient": "^9.0.1"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/kevinramharak/regex-radar",
@@ -21,9 +40,18 @@
     },
     "license": "SEE LICENCE IN LICENCE",
     "qna": false,
-    "regex-radar.trace.server": {
-        "default": "verbose"
-    },
+    "type": "module",
+    "icon": "assets/icon.png",
+    "main": "./dist/extension.js",
+    "files": [
+        "dist/extension.min.js",
+        "dist/server.min.js",
+        "dist/wasm/*.wasm",
+        "dist/wasm/package.json",
+        "dist/workers/recheck/*",
+        "assets/icon.png",
+        "LICENSE"
+    ],
     "engines": {
         "vscode": "^1.105.0"
     },
@@ -42,15 +70,6 @@
     "activationEvents": [
         "onLanguage:javascript",
         "onLanguage:typescript"
-    ],
-    "main": "./dist/extension.js",
-    "files": [
-        "dist/extension.min.js",
-        "dist/server.min.js",
-        "dist/wasm/*.wasm",
-        "dist/wasm/package.json",
-        "assets/icon.png",
-        "LICENSE"
     ],
     "contributes": {
         "viewsContainers": {
@@ -167,23 +186,5 @@
                 "category": "Regex Radar"
             }
         ]
-    },
-    "scripts": {
-        "build": "node scripts/build.js",
-        "dev": "node scripts/build.js --watch",
-        "build:production": "node scripts/build.js --production",
-        "package": "node scripts/package.js",
-        "tsc": "tsc -p .",
-        "clean": "rm -r dist/"
-    },
-    "devDependencies": {
-        "@types/node": "^22.18.13",
-        "@types/vscode": "^1.105.0",
-        "@vscode/vsce": "^3.6.2",
-        "esbuild": "^0.25.12"
-    },
-    "dependencies": {
-        "@regex-radar/client": "*",
-        "vscode-languageclient": "^9.0.1"
     }
 }

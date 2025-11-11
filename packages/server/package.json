@@ -2,10 +2,15 @@
     "name": "@regex-radar/server",
     "private": true,
     "displayName": "Regex Radar Language Server",
-    "publisher": "Kevin Ramharak",
+    "publisher": "regex-radar",
     "description": "The Language Server for Regex Radar",
     "version": "0.1.0",
     "type": "module",
+    "imports": {
+        "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
+        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm",
+        "#workers/recheck/thread.worker": "@local/recheck/thread.worker.js"
+    },
     "exports": {
         ".": {
             "types": "./dist/server.d.ts",
@@ -36,9 +41,5 @@
     },
     "devDependencies": {
         "esbuild": "^0.25.12"
-    },
-    "imports": {
-        "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
-        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm"
     }
 }

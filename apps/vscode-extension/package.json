@@ -9,6 +9,7 @@
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
         "build:production": "node scripts/build.js --production",
+        "vscode:prepublish": "cd ../.. && npm run build:production",
         "package": "node scripts/package.js",
         "publish": "node scripts/publish.js",
         "tsc": "tsc -p .",
@@ -103,12 +104,13 @@
             "title": "Regex Radar",
             "properties": {
                 "regex-radar.discovery.enabled": {
-                    "description": "Enables discovery of regular expressions throughout the workspace.",
+                    "markdownDescription": "Enables discovery of regular expressions throughout the workspace.\n\n*Has no effect in the (pre)alpha release.*",
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+                    "readOnly": true
                 },
-                "regex-radar.languages.enabled": {
-                    "description": "The programming languages that Regex Radar will provide its features for.",
+                "regex-radar.languages": {
+                    "markdownDescription": "The programming languages to detect regular expressions for.\n\n*Has no effect in the (pre)alpha release.*",
                     "type": "array",
                     "items": {
                         "type": "string",
@@ -121,10 +123,62 @@
                     "default": [
                         "javascript",
                         "typescript"
-                    ]
+                    ],
+                    "readOnly": true
+                },
+                "regex-radar.diagnostics.redos.enabled": {
+                    "markdownDescription": "Enables the detection of ReDoS vulnerable regular expressions.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "regex-radar.diagnostics.linter.enabled": {
+                    "markdownDescription": "Enable the linter",
+                    "type": "boolean",
+                    "default": true
+                },
+                "regex-radar.diagnostics.linter.rules": {
+                    "markdownDescription": "Enable specific linter rules",
+                    "type": "object",
+                    "default": {
+                        "no-control-regex": true,
+                        "no-invalid-regexp": true,
+                        "no-regex-spaces": true,
+                        "prefer-regex-new-expression": true,
+                        "prefer-regex-literals": true
+                    },
+                    "properties": {
+                        "no-control-regex": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "no-invalid-regexp": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "no-regex-spaces": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "prefer-regex-new-expression": {
+                            "type": "boolean",
+                            "default": true
+                        },
+                        "prefer-regex-literals": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    },
+                    "required": [
+                        "no-control-regex",
+                        "no-invalid-regex",
+                        "no-regex-spaces",
+                        "prefer-regex-new-expression",
+                        "prefex-regex-literals"
+                    ],
+                    "additionalProperties": false
                 },
                 "@regex-radar/client.trace.server": {
-                    "description": "Traces the communication between VS Code and the language server.",
+                    "markdownDescription": "Traces the communication between VS Code and the language server.\n\n*This setting is used for extension development & debugging purposes.*",
                     "type": "string",
                     "enum": [
                         "off",

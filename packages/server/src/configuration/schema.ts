@@ -26,14 +26,18 @@ const defaultConfigurationSchemaClient: ConfigurationSchemaClient = {
     'client.workspace.folders': [],
 };
 
+type Language = 'javascript' | 'typescript';
+
 export interface ConfigurationSchemaServer {
     'regex-radar.discovery': DiscoveryConfigurationSchema;
     'regex-radar.diagnostics': DiagnosticsConfigurationSchema;
+    'regex-radar.languages': Language[];
 }
 
 const defaultConfigurationSchemaServer: ConfigurationSchemaServer = {
     'regex-radar.discovery': defaultDiscoveryConfigurationSchema,
     'regex-radar.diagnostics': defaultDiagnosticsConfigurationSchema,
+    'regex-radar.languages': ['javascript', 'typescript'],
 };
 
 export const defaultConfigurationSchema: ConfigurationSchema = {

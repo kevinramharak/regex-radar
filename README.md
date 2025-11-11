@@ -21,37 +21,35 @@ It provides instant visibility across your regex patterns, enables safe testing,
 
 Regex Radar indexes both literal `/.../flags` patterns and `new RegExp(...)` constructors. View them in a structured tree panel to understand how patterns are used across your codebase.
 
-![Shows all regex literals and `new RegExp` calls grouped by file so you can locate patterns quickly.](#TODO)
+![Shows all regex literals and `new RegExp` calls grouped by file so you can locate patterns quickly.](./assets/explorer-tree-view.png)
 
 ### Detects unsafe & vulnerable regular expressions, including patterns susceptible to ReDoS.
 
 Powered by the [recheck](https://makenowjust-labs.github.io/recheck/) ReDoS checker, Regex Radar identifies patterns that may lead to catastrophic backtracking or performance issues. Suspicious patterns surface through diagnostics for early review.
 
-![Flags regex patterns that may exhibit catastrophic backtracking or unbounded performance issues.](#TODO)
+![Flags regex patterns that may exhibit catastrophic backtracking or unbounded performance issues.](./assets//diagnostic-redos.png)
 
 ### Designed for performance and a seamless developer experience. The extension operates without blocking or interrupting your normal workflow.
 
 Regex Radar performs analysis incrementally without blocking the UI, keeping editor performance smooth even in large projects.
 
-![Analysis runs incrementally in the background to avoid interrupting typing or navigation.](#TODO)
-
 ### Open regular expressions directly in external tools like RegExr and Regex101
 
 Quick commands let you open any pattern directly in [RegExr](https://regexr.com/) or [Regex101](https://regex101.com/) for testing, visualization or debugging workflows.
 
-![Send any regex directly to RegExr or Regex101 to experiment, debug or share.](#TODO)
+![Send any regex directly to RegExr or Regex101 to experiment, debug or share.](./assets/open-in-external-tools.png)
 
 ### Integrated linting and analysis to detect confusing, overly complex or unnecessarily repetitive patterns.
 
 Highlight patterns that are unclear, overly complex, ambiguous or difficult to maintain. Surface insights that improve long-term readability.
 
-![Detects patterns that are overly complex, redundant, or hard to understand at a glance.](#TODO)
+![Detects patterns that are overly complex, redundant, or hard to understand at a glance.](./assets//diagnostic-linter.png)
 
 ### Fully configurable behavior and analysis rules, allowing you to enable only the parts you value.
 
 Enable or disable analysis behaviors to fine-tune the extension to your development style and environment.
 
-![Enable or disable specific checks, views or workflows to fit your project's needs.](#TODO)
+![Enable or disable specific checks, views or workflows to fit your project's needs.](./assets/configuration-settings.png)
 
 ## Installation
 

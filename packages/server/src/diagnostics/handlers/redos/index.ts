@@ -37,7 +37,7 @@ export class RedosDiagnostic implements IOnDocumentDiagnostic {
         token?: CancellationToken,
     ): Promise<Diagnostic[]> {
         const configuration = await this.configuration.get('regex-radar.diagnostics');
-        if (!configuration.linter.enabled || token?.isCancellationRequested) {
+        if (!configuration.redos.enabled || token?.isCancellationRequested) {
             return [];
         }
 

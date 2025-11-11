@@ -51,6 +51,6 @@ const connection = provider.getRequiredService(IConnection);
 connection.listen();
 
 // This *should* run `dispose` on all disposables registered in the service provider.
-process.addListener('beforeExit', (code) => {
+process.addListener('beforeExit', () => {
     provider.dispose();
 });

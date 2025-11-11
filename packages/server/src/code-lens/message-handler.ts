@@ -16,7 +16,6 @@ import { DOCUMENT_SELECTOR } from '../constants';
 import { IServiceProvider, LsConnection } from '../di';
 import { IOnInitialized } from '../lifecycle';
 import { ILogger } from '../logger';
-import { resultOrCancellation } from '../util/cancellation-promise';
 import { Disposable } from '../util/disposable';
 import { runHandlers } from '../util/handlers';
 import type { MaybePromise } from '../util/maybe';

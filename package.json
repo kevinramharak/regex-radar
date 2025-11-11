@@ -15,21 +15,26 @@
         "build": "turbo run build",
         "build:production": "turbo run build:production",
         "dev": "turbo run dev",
-        "lint": "turbo run lint",
         "tsc": "turbo run tsc",
         "clean": "turbo run clean",
+        "lint": "npx eslint",
         "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {
-        "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-        "@tsconfig/recommended": "^1.0.11",
-        "prettier": "^3.6.2",
-        "turbo": "^2.6.0",
-        "typescript": "~5.9.3",
-        "@local/vscode-languageserver-protocol": "file:../vscode-languageserver-node/protocol",
+        "@eslint/js": "^9.39.1",
+        "@local/recheck": "file:../recheck/packages/recheck",
         "@local/vscode-jsonrpc": "file:../vscode-languageserver-node/jsonrpc",
         "@local/vscode-languageclient": "file:../vscode-languageserver-node/client",
         "@local/vscode-languageserver": "file:../vscode-languageserver-node/server",
-        "@local/recheck": "file:../recheck/packages/recheck"
+        "@local/vscode-languageserver-protocol": "file:../vscode-languageserver-node/protocol",
+        "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+        "@tsconfig/recommended": "^1.0.12",
+        "eslint": "^9.39.1",
+        "globals": "^16.5.0",
+        "jiti": "^2.6.1",
+        "prettier": "^3.6.2",
+        "turbo": "^2.6.1",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "^8.46.4"
     }
 }

@@ -20,6 +20,9 @@ type TimeoutId = ReturnType<typeof setTimeout>;
 export class DiagnosticService
     implements IDiagnosticService, IOnTextDocumentDidChangeHandler, IOnTextDocumentDidCloseHandler
 {
+    /**
+     * TODO: allow the persistance of certain diagnostics / workspace diagnostics
+     */
     private trackers = new Map<string, { version: number; diagnostics: Diagnostic[] }>();
     private timeouts = new Map<string, TimeoutId>();
 

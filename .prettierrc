@@ -11,7 +11,7 @@
     "@trivago/prettier-plugin-sort-imports"
   ],
   "importOrder": [
-    "^node:",
+    "<BUILTIN_MODULES>",
     "<SEPERATOR>",
     "^vscode",
     "^@gitlab/needle$",

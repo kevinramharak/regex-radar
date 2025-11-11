@@ -72,6 +72,8 @@ export class RedosCheckService implements IRedosCheckService {
         return this._check!;
     }
 
+    private queueId = 0;
+
     /**
      * TODO: maybe recheck already has a queue, or can do this in parallel anyway?
      *       do we need a queue?
@@ -85,7 +87,7 @@ export class RedosCheckService implements IRedosCheckService {
             const end = performance.now();
             const duration = end - start;
             this.logger.debug(
-                `redos check '/${param.pattern}/${param.flags ?? ''}' took ${duration.toFixed(2)}ms`,
+                `redos check (${this.queueId++}) '/${param.pattern}/${param.flags ?? ''}' took ${duration.toFixed(2)}ms`,
             );
             this.cache.set(`/${param.pattern}/${param.flags}`, result);
             return result;

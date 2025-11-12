@@ -27,15 +27,12 @@ export class RevealInRegexExporerCodeLens implements IOnCodeLens {
     }
 }
 
-type VSCodeLens = CodeLens & { command: { tooltip?: string } };
-
-function createCodeLens(entry: RegexEntry): VSCodeLens {
+function createCodeLens(entry: RegexEntry): CodeLens {
     return {
         range: entry.location.range,
         command: {
             command: 'regex-radar.tree-data-provider.reveal',
-            title: 'Regex Explorer',
-            tooltip: 'Reveal in the Regex Explorer',
+            title: 'Regex Radar',
             arguments: [entry],
         },
     };

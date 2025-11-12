@@ -107,7 +107,10 @@
                     "markdownDescription": "Enables discovery of regular expressions throughout the workspace.\n\n*Has no effect in the (pre)alpha release.*",
                     "type": "boolean",
                     "default": true,
-                    "readOnly": true
+                    "readOnly": true,
+                    "tags": [
+                        "experimental"
+                    ]
                 },
                 "regex-radar.languages": {
                     "markdownDescription": "The programming languages to detect regular expressions for.\n\n*Has no effect in the (pre)alpha release.*",
@@ -124,7 +127,10 @@
                         "javascript",
                         "typescript"
                     ],
-                    "readOnly": true
+                    "readOnly": true,
+                    "tags": [
+                        "experimental"
+                    ]
                 },
                 "regex-radar.diagnostics.redos.enabled": {
                     "markdownDescription": "Enables the detection of ReDoS vulnerable regular expressions.",
@@ -186,7 +192,10 @@
                         "verbose"
                     ],
                     "ignoreSync": true,
-                    "default": "off"
+                    "default": "off",
+                    "tags": [
+                        "advanced"
+                    ]
                 }
             }
         },

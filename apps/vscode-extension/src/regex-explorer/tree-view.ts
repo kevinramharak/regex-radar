@@ -5,6 +5,10 @@ import { Entry, RegexEntry } from '@regex-radar/lsp-types';
 
 import { RegexRadarTreeDataProvider } from './tree-data-provider';
 
+// TODO: this should reveal + open a quickpick with the commands a user can invoke on a RegexEntry
+// - open in external tool
+// - visualize
+// - text matcher in side panel
 function createRevealCommandHandler(
     explorerTreeView: TreeView<Entry>,
     regexExplorerTreeView: TreeView<Entry>,

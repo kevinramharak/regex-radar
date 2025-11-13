@@ -10,14 +10,11 @@ import { createCheck } from '@local/recheck/core/builder';
 import { type Diagnostics as RecheckDiagnostics, type check } from 'recheck';
 
 import { ILogger } from '../logger';
+import { createAbortSignal } from '../util/abort-signal';
 
 type CheckParam = {
     pattern: string;
     flags?: string;
-};
-
-type QueueParam = CheckParam & {
-    token?: CancellationToken;
 };
 
 type CheckResult =
@@ -25,8 +22,7 @@ type CheckResult =
     | { sync: false; promise: Promise<RecheckDiagnostics> };
 
 export interface IRedosCheckService {
-    check(param: CheckParam): CheckResult;
-    queue(param: QueueParam): Promise<RecheckDiagnostics>;
+    check(param: CheckParam, token?: CancellationToken): CheckResult;
 }
 
 export const IRedosCheckService = createInterfaceId<IRedosCheckService>('IRedosCheckService');
@@ -37,17 +33,13 @@ export const IRedosCheckService = createInterfaceId<IRedosCheckService>('IRedosC
 @Injectable(IRedosCheckService, [ILogger])
 export class RedosCheckService implements IRedosCheckService {
     /**
-     * Use a queue to only have a single check running at a time
-     */
-    private pending: Promise<unknown> = Promise.resolve();
-    /**
      * TODO: LRU cache, persistent cache between sessions.
      */
     private cache = new Map<string, RecheckDiagnostics>();
 
     constructor(private readonly logger: ILogger) {}
 
-    check(param: CheckParam): CheckResult {
+    check(param: CheckParam, token?: CancellationToken): CheckResult {
         const diagnostics = this.cache.get(`/${param.pattern}/${param.flags}`);
         if (diagnostics) {
             return {
@@ -57,41 +49,26 @@ export class RedosCheckService implements IRedosCheckService {
         } else {
             return {
                 sync: false,
-                promise: this.queue(param),
+                /**
+                 * `recheck` should have its own queuing implementation, and uses threads in native binaries, test for what is optimal performance / speed tradeoff
+                 */
+                promise: this.getCheck().then(async (check) => {
+                    const result = await check(param.pattern, param.flags ?? '', {
+                        signal: token ? createAbortSignal(token) : token,
+                    });
+                    this.cache.set(`/${param.pattern}/${param.flags}`, result);
+                    return result;
+                }),
             };
         }
     }
 
-    private _check: typeof check | undefined;
+    private checkFn: Promise<typeof check> | undefined;
     private async getCheck(): Promise<typeof check> {
-        if (!this._check) {
+        if (!this.checkFn) {
             const workerPath = import.meta.resolve('#workers/recheck/thread.worker');
-            this._check = await createCheck(backend, workerPath);
+            this.checkFn = createCheck(backend, workerPath) as Promise<typeof check>;
         }
-        return this._check!;
-    }
-
-    private queueId = 0;
-
-    /**
-     * TODO: maybe recheck already has a queue, or can do this in parallel anyway?
-     *       do we need a queue?
-     */
-    async queue(param: QueueParam): Promise<RecheckDiagnostics> {
-        // update the queue, keep a reference to the promise
-        const check = await this.getCheck();
-        const promise = ((this.pending as Promise<RecheckDiagnostics>) = this.pending.then(async () => {
-            const start = performance.now();
-            const result = await check(param.pattern, param.flags ?? '');
-            const end = performance.now();
-            const duration = end - start;
-            this.logger.debug(
-                `redos check (${this.queueId++}) '/${param.pattern}/${param.flags ?? ''}' took ${duration.toFixed(2)}ms`,
-            );
-            this.cache.set(`/${param.pattern}/${param.flags}`, result);
-            return result;
-        }));
-        // return the promise that will eventually resolve to a diagnostics
-        return promise;
+        return await this.checkFn;
     }
 }

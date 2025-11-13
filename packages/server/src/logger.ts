@@ -10,8 +10,12 @@ export interface ILogger {
     info(message: string): void;
     warn(message: string): void;
     error(message: string): void;
+    time<R>(message: string, task: Task<R>, logFn?: LogFn): R | Promise<R>;
     thrown(thrown: unknown): void;
 }
+
+type Task<R> = () => R | Promise<R>;
+type LogFn = ILogger['trace' | 'debug' | 'error' | 'info' | 'log' | 'warn'];
 
 export const ILogger = createInterfaceId<ILogger>('ILogger');
 
@@ -47,6 +51,26 @@ export class Logger extends Disposable implements ILogger {
 
     error(message: string): void {
         this.connection.console.error(message);
+    }
+
+    time<R>(message: string, task: Task<R>, logFn?: LogFn): R | Promise<R> {
+        logFn = logFn ?? this.debug.bind(this);
+        const start = performance.now();
+        const result = task();
+        if (result instanceof Promise) {
+            return result.then((fulfilled) => {
+                end(logFn);
+                return fulfilled;
+            });
+        } else {
+            end(logFn);
+            return result;
+        }
+        function end(logFn: LogFn) {
+            const end = performance.now();
+            const duration = end - start;
+            logFn(message.replace('$duration', duration.toFixed(2)));
+        }
     }
 
     thrown(thrown: unknown, printStackTrace = true): void {

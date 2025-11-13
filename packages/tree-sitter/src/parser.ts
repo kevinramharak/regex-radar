@@ -21,7 +21,7 @@ const jsQueries = [jsRegexQuery, jsRegexDirectiveQuery];
  * Use the VSCode Tree Sitter Query extension, it is super helpful
  * @see https://marketplace.visualstudio.com/items?itemName=jrieken.vscode-tree-sitter-query
  */
-const queries: Record<string, string[]> = {
+const queriesMap: Record<string, string[]> = {
     javascript: jsQueries,
     typescript: jsQueries,
     tsx: jsQueries,
@@ -41,7 +41,7 @@ export class Parser implements IParser {
         const text = document.getText();
         // NOTE: needed because for some reason, tree-sitter-typescript does not set its language name
         const languageName = this.parser.language!.name! || languageIdToLanguageName[document.languageId];
-        const querySources = queries[languageName];
+        const querySources = queriesMap[languageName];
         if (!querySources) {
             console.warn(
                 `no querySource for language.name: ${this.parser.language?.name} (document.languageId : ${document.languageId})`,
@@ -52,15 +52,14 @@ export class Parser implements IParser {
             };
         }
         const tree = this.parser.parse(text, null, {})!;
-        const matches = querySources.flatMap((source) => {
-            const query = new TreeSitterQuery(this.parser.language!, source);
-            // TODO: use query.captures instead
+        const queries = querySources.map((source) => new TreeSitterQuery(this.parser.language!, source));
+        const matches = queries.flatMap((query) => {
             const matches = query.matches(tree.rootNode, {});
-            query.delete();
             return matches;
         });
-        tree.delete();
         const regexMatchCollection = createRegexMatchCollection(matches);
+        queries.forEach((query) => query.delete());
+        tree.delete();
         return {
             matches: regexMatchCollection,
             uri: document.uri,

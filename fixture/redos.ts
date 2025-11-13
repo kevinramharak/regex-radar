@@ -2,7 +2,6 @@
 const redos_polynomial_2nd_degree = /(https?:\/\/(w{3}\.)?)+[a-zA-Z0-9\-]+\.[a-z]+(\/[^\s]*)*/;
 
 // regex-radar(redos-exponential)
-
 const redos_exponential_1 = /^(a+)+$/;
 const redos_exponential_2 = /(a|aa)+$/;
 const redos_exponential_3 = /(x+x+)+y/;

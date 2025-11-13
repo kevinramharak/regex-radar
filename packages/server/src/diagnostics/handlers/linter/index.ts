@@ -14,9 +14,10 @@ import { EXTENSION_ID } from '../../../constants';
 import { IDiscoveryService } from '../../../discovery';
 import { IOnDocumentDiagnostic } from '../../events';
 
+import { getEnabledRules } from './get-enabled-rules';
 import type { LinterRulesConfigurationSchema } from './schema';
 
-type Code = keyof LinterRulesConfigurationSchema;
+export type Code = keyof LinterRulesConfigurationSchema;
 
 const messages: Record<Code, string> = {
     'no-control-regex': `Unexpected control character(s) in regular expression: '{}'`,
@@ -25,12 +26,6 @@ const messages: Record<Code, string> = {
     'prefer-regex-new-expression': `Use a new expression instead of calling 'RegExp' as a function.`,
     'prefer-regex-literals': `Use a regular expression literal instead of the 'RegExp' constructor.`,
 };
-
-function getEnabledRules(rules: LinterRulesConfigurationSchema): Code[] {
-    return Object.entries(rules)
-        .filter(([_, isEnabled]) => isEnabled)
-        .map(([name]) => name as Code);
-}
 
 // TODO: implement suppressions
 // see: https://eslint.org/docs/latest/use/configure/rules#disabling-rules

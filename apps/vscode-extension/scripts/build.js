@@ -7,7 +7,10 @@ const isProduction = process.argv.includes('--production');
 const isWatch = process.argv.includes('--watch');
 
 async function main() {
-    const ctx = await context({
+    /**
+     * @type {import('esbuild').BuildOptions}
+     */
+    const options = {
         ...sharedOptions,
         /**
          * VS Code extensions are recommended to be bundled, Web version has to be a single file
@@ -21,7 +24,11 @@ async function main() {
         outfile: isProduction ? 'dist/extension.min.js' : 'dist/extension.js',
         platform: 'node',
         external: ['vscode'],
-    });
+        define: {
+            '__BUILD_MODE__': JSON.stringify(isProduction ? 'production' : 'development'),
+        },
+    };
+    const ctx = await context(options);
     if (isWatch) {
         await ctx.watch();
     } else {

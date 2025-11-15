@@ -1,17 +1,26 @@
+import { existsSync } from 'node:fs';
 import { publishVSIX } from '@vscode/vsce';
 
 /**
  * A custom `vsce publish` script
- * @param {string[]} _args
+ * @param {string[]} args
  * @returns {Promise<number>}
  */
-async function main(..._args) {
-    throw new Error('publishing is blocked until the first proper alpha release is ready');
-    // eslint-disable-next-line no-unreachable
-    publishVSIX('./dist/regex-radar-0.1.0.vsix', {
+async function main(...args) {
+    if (!args.includes('--experimental-release')) {
+        console.error('publishing is blocked until the first proper alpha release is ready, use --experimental-release');
+        return 1;
+    }
+    const packagePath = './dist/regex-radar-0.1.2.vsix';
+    if (!existsSync(packagePath)) {
+        console.log(`missing .vsix file at ${packagePath}, run 'npm run publish' and make sure the versions and pre-release status match`);
+        return 1;
+    }
+    const isPreRelease = args.includes('--pre-release');
+    publishVSIX(packagePath, {
         gitTagVersion: false,
         updatePackageJson: false,
-        preRelease: true,
+        preRelease: isPreRelease,
     });
     return 0;
 }

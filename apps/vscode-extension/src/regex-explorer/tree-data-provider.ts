@@ -229,7 +229,7 @@ function createTreeItem(entry: Entry): TreeItem {
     }
 }
 
-// TODO: add selection state based on what file is focusses, and where the cursor is
+// TODO: add selection state based on what file is focussed, and where the cursor is
 function createUriEntry(entry: WorkspaceEntry | DirectoryEntry | FileEntry, iconPath: ThemeIcon): TreeItem {
     return {
         id: entry.uri,
@@ -241,7 +241,7 @@ function createUriEntry(entry: WorkspaceEntry | DirectoryEntry | FileEntry, icon
     };
 }
 
-// TODO: add selection state based on what file is focusses, and where the cursor is
+// TODO: add selection state based on what file is focussed, and where the cursor is
 function createRegexEntry(entry: RegexEntry, iconPath: ThemeIcon): TreeItem {
     const pattern = entry.match.pattern;
     const flags = 'flags' in entry.match ? entry.match.flags : '';

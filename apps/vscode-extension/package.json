@@ -4,7 +4,7 @@
     "displayName": "Regex Radar",
     "publisher": "regex-radar",
     "description": "Workspace-aware regex exploration, testing, and safety analysis powered by the Language Server Protocol.",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "scripts": {
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
@@ -27,6 +27,11 @@
         "@regex-radar/client": "*",
         "vscode-languageclient": "^9.0.1"
     },
+    "imports": {
+        "#wasm/tree-sitter.wasm": "./dist/wasm/tree-sitter.wasm",
+        "#wasm/grammars/*.wasm": "./dist/wasm/*.wasm",
+        "#workers/recheck/thread.worker": "./dist/workers/recheck/thread.worker.js"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/kevinramharak/regex-radar.git",
@@ -47,12 +52,11 @@
     "qna": false,
     "type": "module",
     "icon": "assets/icon.png",
-    "main": "./dist/extension.js",
+    "main": "./dist/extension.min.js",
     "files": [
         "dist/extension.min.js",
         "dist/server.min.js",
         "dist/wasm/*.wasm",
-        "dist/wasm/package.json",
         "dist/workers/recheck/*",
         "assets/icon.png",
         "LICENSE"
@@ -149,10 +153,10 @@
                 "regex-radar.diagnostics.linter.enabled": {
                     "type": "boolean",
                     "default": true,
-                    "markdownDescription": "Turns the built-in regex linter on or off."
+                    "markdownDescription": "Enable the built-in linter for regular expressions."
                 },
                 "regex-radar.diagnostics.linter.rules": {
-                    "markdownDescription": "Enable or disable individual linter rules.",
+                    "markdownDescription": "Enable individual linter rules.",
                     "type": "object",
                     "additionalProperties": false,
                     "default": {

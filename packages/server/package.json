@@ -31,6 +31,7 @@
         "clean": "rm -r dist/"
     },
     "dependencies": {
+        "@eslint-community/regexpp": "^4.12.2",
         "@gitlab/needle": "^1.5.1",
         "@regex-radar/lsp-types": "*",
         "@regex-radar/tree-sitter": "*",

@@ -78,11 +78,13 @@ function createRegexMatchCollection(matches: QueryMatch[]): RegexMatch[] {
             case RegexMatchType.Function:
             case RegexMatchType.Literal: {
                 const regex = getNamedCapture(match, 'regex')!;
-                const pattern = getNamedCaptures(match, 'regex.pattern')!;
+                const patternCaptures = getNamedCaptures(match, 'regex.pattern')!;
+                const pattern = patternCaptures.map((capture) => capture.node.text).join('');
                 const flags = getNamedCapture(match, 'regex.flags');
                 results.push({
                     type,
-                    pattern: pattern.map((capture) => capture.node.text).join(''),
+                    // unless it is a literal, we parse the pattern as the regexp would be evaluated, so string values passed to RegExp, will take `\\t` and execute `\t`
+                    pattern: type === RegexMatchType.Literal ? pattern : pattern.replace('\\\\', '\\'),
                     flags: flags?.node.text ?? '',
                     range: createRangeFromNode(regex.node),
                 });

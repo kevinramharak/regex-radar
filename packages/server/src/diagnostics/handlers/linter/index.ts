@@ -7,6 +7,8 @@ import {
 
 import { Implements, Service, ServiceLifetime } from '@gitlab/needle';
 
+import { RegExpValidator, RegExpSyntaxError } from '@eslint-community/regexpp';
+
 import { EntryType, RegexMatchType } from '@regex-radar/lsp-types';
 
 import { IConfiguration } from '../../../configuration';
@@ -20,8 +22,8 @@ import type { LinterRulesConfigurationSchema } from './schema';
 export type Code = keyof LinterRulesConfigurationSchema;
 
 const messages: Record<Code, string> = {
-    'no-control-regex': `Unexpected control character(s) in regular expression: '{}'`,
-    'no-invalid-regexp': `A regular expression literal can be confused with '/='.`,
+    'no-control-regex': `Unexpected control character(s) in regular expression: '{}'.`,
+    'no-invalid-regexp': `Invalid regular expression: {}.`,
     'no-regex-spaces': `Spaces are hard to count. Use ' {{}}'.`,
     'prefer-regex-new-expression': `Use a new expression instead of calling 'RegExp' as a function.`,
     'prefer-regex-literals': `Use a regular expression literal instead of the 'RegExp' constructor.`,
@@ -32,10 +34,56 @@ const messages: Record<Code, string> = {
 @Implements(IOnDocumentDiagnostic)
 @Service({ dependencies: [IConfiguration, IDiscoveryService], lifetime: ServiceLifetime.Singleton })
 export class LinterDiagnostic implements IOnDocumentDiagnostic {
+    private context = {
+        source: '',
+        controlCharacters: [] as [start: number, end: number][],
+    };
+    private validator = new RegExpValidator({
+        onPatternEnter: () => {
+            this.context.controlCharacters = [];
+        },
+        onCharacter: (start, end, codePoint) => {
+            if (
+                codePoint >= 0x00 &&
+                codePoint <= 0x1f &&
+                (this.context.source.codePointAt(start) === codePoint ||
+                    this.context.source.slice(start, end).startsWith('\\x') ||
+                    this.context.source.slice(start, end).startsWith('\\u'))
+            ) {
+                this.context.controlCharacters.push([start, end]);
+            }
+        },
+    });
+
     constructor(
         private readonly configuration: IConfiguration,
         private readonly discovery: IDiscoveryService,
     ) {}
+
+    private validate(pattern: string, flags: string): string | null {
+        try {
+            this.validator.validatePattern(pattern, void 0, void 0, {
+                unicode: flags.includes('u'),
+                unicodeSets: flags.includes('v'),
+            });
+            if (flags) {
+                this.validator.validateFlags(flags);
+            }
+            return null;
+        } catch (e: unknown) {
+            if (e instanceof RegExpSyntaxError) {
+                return e.message;
+            }
+            throw e;
+        }
+    }
+
+    private validateControlCharacters(pattern: string, flags: string): [start: number, end: number][] {
+        this.context.source = pattern;
+        this.context.controlCharacters = [];
+        this.validate(pattern, flags);
+        return this.context.controlCharacters;
+    }
 
     async onDocumentDiagnostic(
         params: DocumentDiagnosticParams,
@@ -57,22 +105,55 @@ export class LinterDiagnostic implements IOnDocumentDiagnostic {
         }
 
         return entries.children.reduce<Diagnostic[]>((results, entry) => {
-            // TODO: move linter 'pure' code to a seperate package
             {
                 /**
-                 * TODO: implement this
                  * see https://eslint.org/docs/latest/rules/no-control-regex
-                 * NOTE: maybe don't bother with the unicode
                  */
-                const _code: Code = 'no-control-regex';
+                const code: Code = 'no-control-regex';
+                if (enabled.includes(code)) {
+                    const flags = 'flags' in entry.match ? entry.match.flags : '';
+                    const controlCharacters = this.validateControlCharacters(entry.match.pattern, flags);
+                    if (controlCharacters.length > 0) {
+                        const arg = this.context.controlCharacters
+                            .map(([start, end]) => {
+                                return this.context.source.slice(start, end);
+                            })
+                            .join(', ');
+                        results.push({
+                            range: entry.location.range,
+                            source: EXTENSION_ID,
+                            message: messages[code].replace('{}', arg),
+                            severity: DiagnosticSeverity.Error,
+                            code,
+                            data: entry,
+                        });
+                    }
+                }
             }
             {
                 /**
-                 * TODO: implement this
-                 * see https://eslint.org/docs/latest/rules/no-invalid-regexp
-                 * use a regex parser like: https://github.com/eslint-community/regexpp
+                 * see https://github.com/eslint/eslint/blob/main/lib/rules/no-invalid-regexp.js
+                 * for what else to check and what to discard
                  */
-                const _code: Code = 'no-invalid-regexp';
+                const code: Code = 'no-invalid-regexp';
+                if (enabled.includes(code)) {
+                    switch (entry.match.type) {
+                        case RegexMatchType.Constructor:
+                        case RegexMatchType.Function: {
+                            const message = this.validate(entry.match.pattern, entry.match.flags);
+                            if (message) {
+                                results.push({
+                                    range: entry.location.range,
+                                    source: EXTENSION_ID,
+                                    message: messages[code].replace('{}', message),
+                                    severity: DiagnosticSeverity.Error,
+                                    code,
+                                    data: entry,
+                                });
+                            }
+                        }
+                    }
+                }
             }
             {
                 const code: Code = 'no-regex-spaces';

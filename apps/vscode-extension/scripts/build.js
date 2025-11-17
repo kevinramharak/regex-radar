@@ -25,7 +25,7 @@ async function main() {
         platform: 'node',
         external: ['vscode'],
         define: {
-            '__BUILD_MODE__': JSON.stringify(isProduction ? 'production' : 'development'),
+            __BUILD_MODE__: JSON.stringify(isProduction ? 'production' : 'development'),
         },
     };
     const ctx = await context(options);

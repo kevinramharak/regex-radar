@@ -19,7 +19,7 @@
         "tsc": "tsc -b tsconfig.json",
         "clean": "turbo run clean",
         "lint": "eslint --fix",
-        "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,md}\""
+        "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,js,json,md}\""
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",

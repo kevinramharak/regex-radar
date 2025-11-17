@@ -6,17 +6,26 @@ export abstract class Disposable implements IDisposable {
     protected disposables: IDisposable[] = [];
 
     dispose(): void {
-        // TODO: handle async + errors
         this.disposables.forEach((disposable) => {
             try {
-                Promise.resolve(disposable.dispose()).catch(this.onError);
+                Promise.resolve(disposable.dispose()).catch(Disposable.onError);
             } catch (error) {
-                this.onError(error);
+                Disposable.onError(error);
             }
         });
     }
 
-    protected onError(error: unknown) {
+    static dispose(disposables: IDisposable[]): void {
+        disposables.forEach((disposable) => {
+            try {
+                Promise.resolve(disposable.dispose()).catch(Disposable.onError);
+            } catch (error) {
+                Disposable.onError(error);
+            }
+        });
+    }
+
+    protected static onError(error: unknown) {
         console.error(`error occured while disposing: ${error}`, error);
     }
 }

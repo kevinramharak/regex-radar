@@ -7,7 +7,7 @@ import type {
 import type { ILogger } from '../logger';
 
 import { resultOrCancellation } from './cancellation-promise';
-import type { MaybePromise } from './maybe';
+import type { MaybePromise } from './maybe-promise';
 
 /**
  * A helper function to run a collection of event handlers that all return a `MaybePromise<T[]>`.

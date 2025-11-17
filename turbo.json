@@ -18,9 +18,6 @@
             "cache": false,
             "persistent": true
         },
-        "tsc": {
-            "cache": false
-        },
         "clean": {
             "cache": false
         }

@@ -33,7 +33,7 @@ async function ensureServerModuleIsCopied() {
 }
 
 const treeSitterWasmPath = path.resolve(nodeModulesPath, 'web-tree-sitter', 'tree-sitter.wasm');
-const treeSitterGrammarsDirectory = path.resolve(monoRepoPath, 'packages', 'parsers', 'grammars');
+const treeSitterGrammarsDirectory = path.resolve(monoRepoPath, 'packages', 'tree-sitter', 'grammars');
 const wasmDestinationDirectoryPath = path.resolve(distDirectoryPath, 'wasm');
 
 async function ensureServerWasmFilesAreCopied() {

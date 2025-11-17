@@ -22,7 +22,7 @@
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
         "build:production": "node scripts/build.js --production",
-        "tsc": "tsc -p .",
+        "tsc": "tsc -b tsconfig.json",
         "clean": "rm -r dist/"
     },
     "dependencies": {

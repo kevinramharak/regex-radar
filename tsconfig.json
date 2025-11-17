@@ -9,7 +9,7 @@
         "isolatedModules": true,
         "resolveJsonModule": true,
         "declarationMap": true,
-        "sourceMap": true,
+        "noEmitOnError": true,
         "target": "es2024",
         "module": "esnext",
         "moduleResolution": "bundler",
@@ -17,7 +17,7 @@
             "@regex-radar/client": ["./packages/client/src"],
             "@regex-radar/server": ["./packages/server/src"],
             "@regex-radar/lsp-types": ["./packages/lsp-types/src"],
-            "@regex-radar/parsers": ["./packages/parsers/src"]
+            "@regex-radar/tree-sitter": ["./packages/tree-sitter/src"]
         }
     },
     "references": [
@@ -32,7 +32,7 @@
             "path": "packages/lsp-types"
         },
         {
-            "path": "packages/parsers"
+            "path": "packages/tree-sitter"
         }
     ]
 }

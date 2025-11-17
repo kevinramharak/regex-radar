@@ -4,7 +4,7 @@
     "displayName": "Regex Radar",
     "publisher": "regex-radar",
     "description": "Workspace-aware regex exploration, testing, and safety analysis powered by the Language Server Protocol.",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "scripts": {
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
@@ -12,7 +12,7 @@
         "vscode:prepublish": "cd ../.. && npm run build:production",
         "package": "node scripts/package.js",
         "publish": "node scripts/publish.js",
-        "tsc": "tsc -p .",
+        "tsc": "tsc -b tsconfig.json",
         "clean": "rm -r dist/",
         "vscode:install-extension": "code --install-extension ./dist/regex-radar-*.vsix",
         "vscode:uninstall-extension": "code --uninstall-extension regex-radar.regex-radar"
@@ -26,6 +26,11 @@
     "dependencies": {
         "@regex-radar/client": "*",
         "vscode-languageclient": "^9.0.1"
+    },
+    "imports": {
+        "#wasm/tree-sitter.wasm": "./dist/wasm/tree-sitter.wasm",
+        "#wasm/grammars/*.wasm": "./dist/wasm/*.wasm",
+        "#workers/recheck/thread.worker": "./dist/workers/recheck/thread.worker.js"
     },
     "repository": {
         "type": "git",
@@ -52,7 +57,6 @@
         "dist/extension.min.js",
         "dist/server.min.js",
         "dist/wasm/*.wasm",
-        "dist/wasm/package.json",
         "dist/workers/recheck/*",
         "assets/icon.png",
         "LICENSE"
@@ -105,18 +109,28 @@
             "type": "object",
             "title": "Regex Radar",
             "properties": {
-                "regex-radar.discovery.enabled": {
-                    "markdownDescription": "Enables discovery of regular expressions throughout the workspace.\n\n*Has no effect in the (pre)alpha release.*",
-                    "type": "boolean",
-                    "default": true,
-                    "readOnly": true,
-                    "tags": [
-                        "experimental"
-                    ]
+                "regex-radar.discovery.scope": {
+                    "type": "string",
+                    "default": "open-workspaces",
+                    "enum": [
+                        "off",
+                        "open-editors",
+                        "open-workspaces"
+                    ],
+                    "enumDescriptions": [
+                        "Disable regex discovery.",
+                        "Scan only regex patterns in open editors.",
+                        "Scan the open workspaces for regex patterns."
+                    ],
+                    "markdownDescription": "Controls where Regex Radar searches for regex patterns."
                 },
                 "regex-radar.languages": {
-                    "markdownDescription": "The programming languages to detect regular expressions for.\n\n*Has no effect in the (pre)alpha release.*",
                     "type": "array",
+                    "default": [
+                        "javascript",
+                        "typescript"
+                    ],
+                    "uniqueItems": true,
                     "items": {
                         "type": "string",
                         "enum": [
@@ -124,29 +138,27 @@
                             "typescript"
                         ]
                     },
-                    "uniqueItems": true,
-                    "default": [
-                        "javascript",
-                        "typescript"
-                    ],
-                    "readOnly": true,
-                    "tags": [
-                        "experimental"
-                    ]
+                    "markdownDescription": "Programming languages to scan for regex literals and patterns."
+                },
+                "regex-radar.diagnostics.workspace.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Runs diagnostics for regexes across the entire workspace, not just open editors."
                 },
                 "regex-radar.diagnostics.redos.enabled": {
-                    "markdownDescription": "Enables the detection of ReDoS vulnerable regular expressions.",
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+                    "markdownDescription": "Analyze regular expressions for ReDoS vulnerabilities."
                 },
                 "regex-radar.diagnostics.linter.enabled": {
-                    "markdownDescription": "Enable the linter",
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+                    "markdownDescription": "Enable the built-in linter for regular expressions."
                 },
                 "regex-radar.diagnostics.linter.rules": {
-                    "markdownDescription": "Enable specific linter rules",
+                    "markdownDescription": "Enable individual linter rules.",
                     "type": "object",
+                    "additionalProperties": false,
                     "default": {
                         "no-control-regex": true,
                         "no-invalid-regexp": true,
@@ -157,33 +169,30 @@
                     "properties": {
                         "no-control-regex": {
                             "type": "boolean",
-                            "default": true
+                            "default": true,
+                            "markdownDescription": "Disallow control characters in regular expressions."
                         },
                         "no-invalid-regexp": {
                             "type": "boolean",
-                            "default": true
+                            "default": true,
+                            "markdownDescription": "Disallow invalid regular expressions in RegExp constructor calls."
                         },
                         "no-regex-spaces": {
                             "type": "boolean",
-                            "default": true
+                            "default": true,
+                            "markdownDescription": "Disallow unnecessary spaces in regular expressions."
                         },
                         "prefer-regex-new-expression": {
                             "type": "boolean",
-                            "default": true
+                            "default": true,
+                            "markdownDescription": "Prefer using `new RegExp()` when constructing dynamic expressions."
                         },
                         "prefer-regex-literals": {
                             "type": "boolean",
-                            "default": true
+                            "default": true,
+                            "markdownDescription": "Prefer regex literals over `new RegExp()` when possible."
                         }
-                    },
-                    "required": [
-                        "no-control-regex",
-                        "no-invalid-regex",
-                        "no-regex-spaces",
-                        "prefer-regex-new-expression",
-                        "prefex-regex-literals"
-                    ],
-                    "additionalProperties": false
+                    }
                 },
                 "@regex-radar/client.trace.server": {
                     "markdownDescription": "Traces the communication between VS Code and the language server.\n\n*This setting is used for extension development & debugging purposes.*",

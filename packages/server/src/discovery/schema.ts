@@ -1,7 +1,7 @@
 export interface DiscoveryConfigurationSchema {
-    enabled: boolean;
+    scope: 'off' | 'open-editors' | 'open-workspaces';
 }
 
 export const defaultDiscoveryConfigurationSchema: DiscoveryConfigurationSchema = {
-    enabled: true,
+    scope: 'open-workspaces',
 };

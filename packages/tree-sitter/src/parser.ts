@@ -21,7 +21,7 @@ const jsQueries = [jsRegexQuery, jsRegexDirectiveQuery];
  * Use the VSCode Tree Sitter Query extension, it is super helpful
  * @see https://marketplace.visualstudio.com/items?itemName=jrieken.vscode-tree-sitter-query
  */
-const queries: Record<string, string[]> = {
+const queriesMap: Record<string, string[]> = {
     javascript: jsQueries,
     typescript: jsQueries,
     tsx: jsQueries,
@@ -41,7 +41,7 @@ export class Parser implements IParser {
         const text = document.getText();
         // NOTE: needed because for some reason, tree-sitter-typescript does not set its language name
         const languageName = this.parser.language!.name! || languageIdToLanguageName[document.languageId];
-        const querySources = queries[languageName];
+        const querySources = queriesMap[languageName];
         if (!querySources) {
             console.warn(
                 `no querySource for language.name: ${this.parser.language?.name} (document.languageId : ${document.languageId})`,
@@ -51,14 +51,17 @@ export class Parser implements IParser {
                 uri: document.uri,
             };
         }
-        const matches = querySources.flatMap((source) => {
-            const query = new TreeSitterQuery(this.parser.language!, source);
-            const tree = this.parser.parse(text, null, {})!;
+        const tree = this.parser.parse(text, null, {})!;
+        const queries = querySources.map((source) => new TreeSitterQuery(this.parser.language!, source));
+        const matches = queries.flatMap((query) => {
             const matches = query.matches(tree.rootNode, {});
             return matches;
         });
+        const regexMatchCollection = createRegexMatchCollection(matches);
+        queries.forEach((query) => query.delete());
+        tree.delete();
         return {
-            matches: createRegexMatchCollection(matches),
+            matches: regexMatchCollection,
             uri: document.uri,
         };
     }
@@ -75,11 +78,13 @@ function createRegexMatchCollection(matches: QueryMatch[]): RegexMatch[] {
             case RegexMatchType.Function:
             case RegexMatchType.Literal: {
                 const regex = getNamedCapture(match, 'regex')!;
-                const pattern = getNamedCaptures(match, 'regex.pattern')!;
+                const patternCaptures = getNamedCaptures(match, 'regex.pattern')!;
+                const pattern = patternCaptures.map((capture) => capture.node.text).join('');
                 const flags = getNamedCapture(match, 'regex.flags');
                 results.push({
                     type,
-                    pattern: pattern.map((capture) => capture.node.text).join(''),
+                    // unless it is a literal, we parse the pattern as the regexp would be evaluated, so string values passed to RegExp, will take `\\t` and execute `\t`
+                    pattern: type === RegexMatchType.Literal ? pattern : pattern.replace('\\\\', '\\'),
                     flags: flags?.node.text ?? '',
                     range: createRangeFromNode(regex.node),
                 });

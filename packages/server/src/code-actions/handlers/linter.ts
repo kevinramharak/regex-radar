@@ -12,6 +12,7 @@ import { RegexEntry, RegexMatchType, type RegexMatch } from '@regex-radar/lsp-ty
 
 import { IConfiguration } from '../../configuration';
 import { EXTENSION_ID } from '../../constants';
+import { getEnabledRules } from '../../diagnostics/handlers/linter/get-enabled-rules';
 import type { LinterRulesConfigurationSchema } from '../../diagnostics/handlers/linter/schema';
 import { IOnCodeAction } from '../events';
 
@@ -23,10 +24,12 @@ export class LinterCodeAction implements IOnCodeAction {
     kinds: string[] = [CodeActionKind.QuickFix];
     async onCodeAction(params: CodeActionParams, token?: CancellationToken): Promise<CodeAction[]> {
         const configuration = await this.configuration.get('regex-radar.diagnostics');
-        const enabled = Object.entries(configuration.linter)
-            .filter(([_, isEnabled]) => isEnabled)
-            .map(([name]) => name);
-        if (!enabled.length || token?.isCancellationRequested) {
+        if (!configuration.linter.enabled || token?.isCancellationRequested) {
+            return [];
+        }
+
+        const enabled = getEnabledRules(configuration.linter.rules);
+        if (!enabled.length) {
             return [];
         }
 

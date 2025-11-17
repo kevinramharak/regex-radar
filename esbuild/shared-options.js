@@ -16,7 +16,7 @@ const verbose = process.argv.includes('--verbose');
 export const sharedOptions = {
     minify: isProduction,
     /**
-     * Always generate sourcemaps, but make sure they are not being bundled as part of the extension with `files` or a `.vscodeignore`
+     * Generate sourcemaps for development, but make sure they are not being bundled as part of the extension with `files` or a `.vscodeignore`
      */
     sourcemap: !isProduction,
     sourcesContent: false,
@@ -41,6 +41,7 @@ export const sharedOptions = {
  * Because `vscode-languageserver` is distrubuted as commonjs, we need this banner to fix `require` calls.
  * @see https://github.com/evanw/esbuild/issues/1921
  * NOTE: only use this when bundling into a single file with `bundle: true`
+ * TODO: get rid of this with ESM builds
  */
 export const banner = `
 // topLevelCreateRequire is used to circumvent external dependencies being bundled as CJS instead of ESM

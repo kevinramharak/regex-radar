@@ -20,7 +20,7 @@ import { ILogger } from '../logger';
 import { unique } from '../util/array';
 import { Disposable } from '../util/disposable';
 import { runHandlers } from '../util/handlers';
-import type { MaybePromise } from '../util/maybe';
+import type { MaybePromise } from '../util/maybe-promise';
 
 import { IOnCodeAction, IOnCodeActionResolve } from './events';
 

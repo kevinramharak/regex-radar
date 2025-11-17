@@ -57,7 +57,7 @@ const GRAMMARS = [
 const cache = new Map();
 
 /**
- * Root directory of `@regex-radar/parsers`
+ * Root directory of `@regex-radar/tree-sitter`
  */
 const pkgRoot = path.resolve(__dirname, '..');
 const outputDirPath = path.resolve(pkgRoot, 'grammars');

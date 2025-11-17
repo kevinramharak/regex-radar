@@ -16,9 +16,9 @@
         "build": "turbo run build",
         "build:production": "turbo run build:production",
         "dev": "turbo run dev",
-        "tsc": "turbo run tsc",
+        "tsc": "tsc -b tsconfig.json",
         "clean": "turbo run clean",
-        "lint": "npx eslint",
+        "lint": "eslint --fix",
         "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {

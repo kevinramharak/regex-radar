@@ -22,6 +22,9 @@ export class DiagnosticService
 {
     /**
      * TODO: allow the persistance of certain diagnostics / workspace diagnostics
+     * best to seperate workspace diagnostics (including push diagnostics) from pull diagnostics
+     * have some kind of interop to avoid double work, but in general open documents should work with pull
+     * the rest of the workspace with push (and fs watchers to detect changes)
      */
     private trackers = new Map<string, { version: number; diagnostics: Diagnostic[] }>();
     private timeouts = new Map<string, TimeoutId>();

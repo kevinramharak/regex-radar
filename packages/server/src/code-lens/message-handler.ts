@@ -18,7 +18,7 @@ import { IOnInitialized } from '../lifecycle';
 import { ILogger } from '../logger';
 import { Disposable } from '../util/disposable';
 import { runHandlers } from '../util/handlers';
-import type { MaybePromise } from '../util/maybe';
+import type { MaybePromise } from '../util/maybe-promise';
 
 import { IOnCodeLens, IOnCodeLensResolve } from './events';
 

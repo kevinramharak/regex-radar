@@ -1,9 +1,9 @@
 {
-    "name": "@regex-radar/parsers",
+    "name": "@regex-radar/tree-sitter",
     "private": true,
-    "displayName": "Regex Radar Parsers",
+    "displayName": "Regex Radar Tree Sitter parsers, grammars and queries",
     "publisher": "regex-radar",
-    "description": "The Parsers used by Regex Radar",
+    "description": "The Tree Sitter componentsd used by Regex Radar",
     "version": "0.1.0",
     "type": "module",
     "exports": {
@@ -15,12 +15,12 @@
     },
     "imports": {
         "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
-        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm"
+        "#wasm/grammars/*.wasm": "@regex-radar/tree-sitter/grammars/*.wasm"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/kevinramharak/regex-radar",
-        "directory": "packages/parsers"
+        "directory": "packages/tree-sitter"
     },
     "homepage": "https://github.com/kevinramharak/regex-radar",
     "scripts": {
@@ -28,7 +28,7 @@
         "build": "node scripts/build.js",
         "build:production": "node scripts/build.js --production",
         "build:grammars": "node scripts/build-grammars.js",
-        "tsc": "tsc -p .",
+        "tsc": "tsc -b tsconfig.json",
         "clean": "rm -r dist/"
     },
     "devDependencies": {

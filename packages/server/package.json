@@ -8,7 +8,7 @@
     "type": "module",
     "imports": {
         "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
-        "#wasm/grammars/*.wasm": "@regex-radar/parsers/grammars/*.wasm",
+        "#wasm/grammars/*.wasm": "@regex-radar/tree-sitter/grammars/*.wasm",
         "#workers/recheck/thread.worker": "@local/recheck/thread.worker.js"
     },
     "exports": {
@@ -27,13 +27,14 @@
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",
         "build:production": "node scripts/build.js --production",
-        "tsc": "tsc -p .",
+        "tsc": "tsc -b tsconfig.json",
         "clean": "rm -r dist/"
     },
     "dependencies": {
+        "@eslint-community/regexpp": "^4.12.2",
         "@gitlab/needle": "^1.5.1",
         "@regex-radar/lsp-types": "*",
-        "@regex-radar/parsers": "*",
+        "@regex-radar/tree-sitter": "*",
         "recheck": "^4.5.0",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12",

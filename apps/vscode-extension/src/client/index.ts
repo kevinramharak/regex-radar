@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 
-import { ExtensionContext, ExtensionMode } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import type { ServerOptions } from 'vscode-languageclient/node';
 
 import { RegexRadarLanguageClient } from '@regex-radar/client';
@@ -26,6 +26,7 @@ export async function registerLanguageClient(context: ExtensionContext): Promise
 
 /**
  * Local copy to avoid having to import the whole package
+ * TODO: check if tree shaking helps here
  */
 const TransportKind: typeof import('vscode-languageclient/node').TransportKind = {
     stdio: 0,
@@ -35,9 +36,8 @@ const TransportKind: typeof import('vscode-languageclient/node').TransportKind =
 } as const;
 
 function createLanguageClient(context: ExtensionContext): RegexRadarLanguageClient {
-    // TODO: figure out how to bundle the server, as part of the extension
     const serverModulePath =
-        context.extensionMode === ExtensionMode.Production
+        __BUILD_MODE__ === 'production'
             ? path.join('dist/server.min.js')
             : path.join('..', '..', 'packages', 'server', 'dist', 'server.js');
     const serverModule = context.asAbsolutePath(serverModulePath);

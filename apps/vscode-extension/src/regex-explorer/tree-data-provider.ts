@@ -229,7 +229,7 @@ function createTreeItem(entry: Entry): TreeItem {
     }
 }
 
-// TODO: add selection state based on what file is focusses, and where the cursor is
+// TODO: add selection state based on what file is focussed, and where the cursor is
 function createUriEntry(entry: WorkspaceEntry | DirectoryEntry | FileEntry, iconPath: ThemeIcon): TreeItem {
     return {
         id: entry.uri,
@@ -241,7 +241,12 @@ function createUriEntry(entry: WorkspaceEntry | DirectoryEntry | FileEntry, icon
     };
 }
 
-// TODO: add selection state based on what file is focusses, and where the cursor is
+// TODO: add selection state based on what file is focussed, and where the cursor is
+// TODO: add ReDoS diagnostic information + highlight the heatmap ranges
+// TODO: file decoration provider to provide count/badge/label and coloring information
+//       see: https://github.com/M icrosoft/vscode/issues/54938
+//       and: https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions
+//       and: https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions
 function createRegexEntry(entry: RegexEntry, iconPath: ThemeIcon): TreeItem {
     const pattern = entry.match.pattern;
     const flags = 'flags' in entry.match ? entry.match.flags : '';
@@ -249,7 +254,6 @@ function createRegexEntry(entry: RegexEntry, iconPath: ThemeIcon): TreeItem {
         id: createUriForLocation(entry.location),
         resourceUri: Uri.parse(createUriForLocation(entry.location)),
         label: `/${pattern}/${flags}`,
-        description: true,
         contextValue: 'regex',
         iconPath,
         command: createVsOpenCommand(entry),

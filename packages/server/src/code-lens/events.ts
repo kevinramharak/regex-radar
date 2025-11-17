@@ -2,7 +2,7 @@ import type { CancellationToken, CodeLens, CodeLensParams } from 'vscode-languag
 
 import { createInterfaceId } from '@gitlab/needle';
 
-import type { MaybePromise } from '../util/maybe';
+import type { MaybePromise } from '../util/maybe-promise';
 
 export interface IOnCodeLens {
     onCodeLens(params: CodeLensParams, token?: CancellationToken): MaybePromise<CodeLens[]>;

@@ -20,7 +20,6 @@ const literal_x_null = /\x00/;
 const literal_x_control = /\x0C/;
 const literal_x_seperator = /\x1F/;
 const literal_u_control = /\u000C/;
-// TODO: what even is this
 const literal_u_control_unicode_flag = /\u{C}/u;
 const new_control = new RegExp('\x0C'); // raw U+000C character in the pattern
 const new_control_escape = new RegExp('\\x0C'); // \x0C pattern

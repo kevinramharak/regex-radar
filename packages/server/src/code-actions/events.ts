@@ -8,7 +8,7 @@ import type {
 
 import { createInterfaceId } from '@gitlab/needle';
 
-import type { MaybePromise } from '../util/maybe';
+import type { MaybePromise } from '../util/maybe-promise';
 
 /**
  * TODO: link the requiresSupport flags to the documentation

@@ -4,7 +4,7 @@
     "displayName": "Regex Radar",
     "publisher": "regex-radar",
     "description": "Workspace-aware regex exploration, testing, and safety analysis powered by the Language Server Protocol.",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "scripts": {
         "build": "node scripts/build.js",
         "dev": "node scripts/build.js --watch",

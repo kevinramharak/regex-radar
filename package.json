@@ -1,6 +1,7 @@
 {
     "name": "@regex-radar/monorepo",
     "description": "A toolkit for developing & maintaining Regular Expressions powered by the Language Service Protocol",
+    "version": "0.1.3",
     "private": true,
     "packageManager": "npm@11.3.0",
     "license": "SEE LICENCE IN LICENCE",
@@ -21,7 +22,7 @@
         "lint": "eslint --fix",
         "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,js,json,md}\"",
         "preversion": "npm run tsc && npm run lint",
-        "version": "npm run build:production"
+        "version": "npm version %npm_package_version% --workspaces && npm run build:production && git add **/package.json"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",

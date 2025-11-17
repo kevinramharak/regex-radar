@@ -4,7 +4,7 @@
     "displayName": "Regex Radar Language Server",
     "publisher": "regex-radar",
     "description": "The Language Server for Regex Radar",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "type": "module",
     "imports": {
         "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",

@@ -52,7 +52,7 @@
     "qna": false,
     "type": "module",
     "icon": "assets/icon.png",
-    "main": "./dist/extension.min.js",
+    "main": "./dist/extension.js",
     "files": [
         "dist/extension.min.js",
         "dist/server.min.js",

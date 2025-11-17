@@ -16,7 +16,7 @@ const verbose = process.argv.includes('--verbose');
 export const sharedOptions = {
     minify: isProduction,
     /**
-     * Always generate sourcemaps, but make sure they are not being bundled as part of the extension with `files` or a `.vscodeignore`
+     * Generate sourcemaps for development, but make sure they are not being bundled as part of the extension with `files` or a `.vscodeignore`
      */
     sourcemap: !isProduction,
     sourcesContent: false,

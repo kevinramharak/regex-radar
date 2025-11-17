@@ -22,7 +22,7 @@
         "lint": "eslint --fix",
         "format": "prettier --cache --cache-strategy metadata --write \"**/*.{ts,tsx,js,json,md}\"",
         "preversion": "npm run tsc && npm run lint",
-        "version": "npm run build:production"
+        "version": "npm run build:production && git add -A"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",

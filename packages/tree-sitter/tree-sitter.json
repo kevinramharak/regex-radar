@@ -13,7 +13,7 @@
         "zig": false
     },
     "metadata": {
-        "version": "0.1.2",
+        "version": "0.0.0",
         "description": "This file is needed to generate the grammars, this repo has no custom grammar definitions",
         "links": {
             "repository": "https://github.com/kevinramharak/regex-radar"

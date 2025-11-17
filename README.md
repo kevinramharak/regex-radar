@@ -1,50 +1,57 @@
 # Regex Radar
 
 A Language Server-powered toolkit for developing, testing, and maintaining regular expressions inside VS Code and beyond.
-It provides instant visibility across your regex patterns, enables safe testing, and is built with an extensible architecture that can support other editors and future CLI workflows.
-
-- Lists all regex patterns across your workspace in a structured explorer
-- Highlights unsafe or performance-heavy regexes (including ReDoS risks)
-- Runs analysis incrementally to stay fast and avoid UI interruptions
-- Opens regexes directly in external tools like RegExr and Regex101
-- Provides linting and maintainability insights for complex expressions
-- Fully configurable behavior and rules to match your workflow
+It provides instant visibility across your regex patterns, enables safe testing, and is built with an extensible architecture that can support other editors and CLI workflows.
 
 > [!NOTE]
+> **Versioning & stability**
 >
-> Regex Radar is in (pre)alpha. Features and behavior are still evolving as the core foundation is built toward the first stable release.
+> Regex Radar is currently in the `0.x.x` phase. Breaking changes and unstable behavior are still expected.
+>
+> - **0.even.x** → regular releases (recommended for most users)
+> - **0.odd.x** → pre-releases and experimental features
+>
+> The first stable release will begin at `1.x.x`.
 
 ## Features
 
-### Dynamic discovery of regular expressions across your workspace, presented in a clear and structured view.
+### Discovery
 
-Regex Radar indexes both literal `/.../flags` patterns and `new RegExp(...)` constructors. View them in a structured tree panel to understand how patterns are used across your codebase.
+Dynamic discovery of regular expressions across your workspace, presented in a clear and structured view.
+
+Regex Radar indexes both literal `/.../flags` patterns and `RegExp(...)` constructors/function calls. View them in a structured tree panel to understand how patterns are used across your codebase.
 
 ![Shows all regex literals and `new RegExp` calls grouped by file so you can locate patterns quickly.](./assets/explorer-tree-view.png)
 
-### Detects unsafe & vulnerable regular expressions, including patterns susceptible to ReDoS.
+### Detects ReDoS vulnerabilities
+
+Detect unsafe & vulnerable regular expressions, including patterns susceptible to ReDoS.
 
 Powered by the [recheck](https://makenowjust-labs.github.io/recheck/) ReDoS checker, Regex Radar identifies patterns that may lead to catastrophic backtracking or performance issues. Suspicious patterns surface through diagnostics for early review.
 
 ![Flags regex patterns that may exhibit catastrophic backtracking or unbounded performance issues.](./assets//diagnostic-redos.png)
 
-### Designed for performance and a seamless developer experience. The extension operates without blocking or interrupting your normal workflow.
+### Focus on Performance and Dev UX
 
 Regex Radar performs analysis incrementally without blocking the UI, keeping editor performance smooth even in large projects.
 
-### Open regular expressions directly in external tools like RegExr and Regex101
+### External Tool integration
 
 Quick commands let you open any pattern directly in [RegExr](https://regexr.com/) or [Regex101](https://regex101.com/) for testing, visualization or debugging workflows.
 
 ![Send any regex directly to RegExr or Regex101 to experiment, debug or share.](./assets/open-in-external-tools.png)
 
-### Integrated linting and analysis to detect confusing, overly complex or unnecessarily repetitive patterns.
+### Built-in linter
+
+Integrated linting and analysis to detect confusing, overly complex or unnecessarily repetitive patterns.
 
 Highlight patterns that are unclear, overly complex, ambiguous or difficult to maintain. Surface insights that improve long-term readability.
 
 ![Detects patterns that are overly complex, redundant, or hard to understand at a glance.](./assets//diagnostic-linter.png)
 
-### Fully configurable behavior and analysis rules, allowing you to enable only the parts you value.
+### Configurable
+
+Fully configurable behavior and analysis rules, allowing you to enable only the parts you value.
 
 Enable or disable analysis behaviors to fine-tune the extension to your development style and environment.
 
@@ -52,10 +59,11 @@ Enable or disable analysis behaviors to fine-tune the extension to your developm
 
 ## Installation
 
-Available on the VS Code Marketplace as [Regex Radar](https://marketplace.visualstudio.com/items?itemName=regex-radar.regex-radar) or in your VS Code editor in the Extensions panel as "Regex Radar".
+Available on:
 
-> [!WARNING]
-> Currently released `0.1.x` versions are considered (pre-)alpha releases and not guarrenteed to work without issues.
+- the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=regex-radar.regex-radar).
+- in your [VS Code editor](vscode:extension/regex-radar.regex-radar).
+- As `.vsix` file on the [GitHub Releases](github.com/kevinramharak/regex-radar/releases) page.
 
 ## Getting Started
 
@@ -67,12 +75,15 @@ Available on the VS Code Marketplace as [Regex Radar](https://marketplace.visual
 
 ## How it works
 
-Regex Radar is composed of two parts:
+Regex Radar is composed of multiple parts:
 
-- **Client Extension (VS Code):** Displays the Regex Explorer UI, handles navigation and commands.
-- **Language Server:** Analyzes source files, extracts regex patterns, performs diagnostics and provides data back to the client.
+- **Client Extension (VS Code):** The UI that is integrated in the VS Code editor and will enable communication with the language server
+- **Language Server:** implements the Language Service Protocol to enable clients to invoke the various features of Regex Radar
+- **Features**: the different features that Regex Radar provides to develop, test and maintain regular expressions.
 
 The Language Server architecture allows the same backend logic to be shared with other IDEs or tooling environments.
+
+Additionally the source code parsing is done with [`tree-sitter`](https://tree-sitter.github.io/tree-sitter/), to help aim for a language agnostic toolset that can work with any language that has a tree sitter grammar available.
 
 ## FAQ
 
@@ -80,9 +91,9 @@ The Language Server architecture allows the same backend logic to be shared with
 
 **No**, this is not one of those AI-generated extensions.
 
-All code, architecture, and design decisions are written and maintained by a human. AI was only used where it's actually effective: brainstorming ideas, organizing milestones, and tightening documentation. The implementation itself is fully human.
+All code, architecture, and design decisions are written and maintained by a human. AI was only used where it's actually effective: brainstorming ideas, organizing milestones, and proofreading documentation. The implementation itself is fully human.
 
-Regex tooling requires sustained reasoning about parsing, correctness, performance and editor workflows. Current AI tools do not produce maintainable codebases in this domain.
+I am a software (over)engineer, not a project manager or marketeer, so assistance in those areas is very welcome, and IMO good fit for AI.
 
 ### What does "Language Server-powered" mean and why does it matter?
 
@@ -91,6 +102,15 @@ responsive and fast. The language server handles analysis independently of the e
 
 It also allows other IDEs or tools to use the same engine via the
 [Language Server Protocol](https://microsoft.github.io/language-server-protocol/).
+
+### How is this different from other Regular Expression extensions?
+
+Most regex extensions only scan individual files or rely on slow, error-prone scanning. Regex Radar takes a different approach:
+
+- Workspace-wide discovery. Automatically finds every regex in your project and organizes them in a clear, navigable tree.
+- Fast and non-blocking. Scans large codebases without freezing the editor. The heavy lifting runs outside the VS Code UI, so performance stays smooth.
+- Accurate extraction. Uses language-aware analysis instead of brittle pattern matching, reducing false positives and missed regexes.
+- Designed to grow. Built on a pluggable architecture so new analysis tools can be added, and tools can share results instead of duplicating work.
 
 ### Does this only support JavaScript/TypeScript?
 
@@ -107,36 +127,44 @@ If you already use ESLint with rules that check regexes, disable overlapping rul
 
 ### 1. Reach the MVP baseline
 
-- [ ] Complete the initial [MVP Release](https://github.com/kevinramharak/regex-radar/issues/6)
-- [ ] Stabilize core regex discovery and navigation
-- [ ] Confirm ReDoS detection behavior and diagnostics messaging
+- [x] Complete the initial [MVP Release](https://github.com/kevinramharak/regex-radar/issues/6)
 
-### 2. Improve regex understanding and visualization
+### Planned features
 
-- [ ] Inline hover explanations with structural breakdowns
-- [ ] Example string testing inside a preview editor with match and capture group highlighting
+#### Visualization & Understanding
+
+- [ ] Inline hover / Regex explorer panel explanations with structural breakdowns
 - [ ] Visual breakdown of vulnerable patterns (heatmaps, worst-case match traces)
+- [ ] Complexity scoring to help with maintainibility estimates
 
-### 3. Guidance, refactoring and maintainability
+#### Testing
 
-- [ ] Complexity scoring for quick assessment
+- [ ] Example string testing inside a preview editor with match and capture group highlighting
+- [ ] Optional benchmarking mode to measure pattern execution cost
+
+#### Fixes, Refactoring and Suggestions
+
 - [ ] Suggestions to simplify, rewrite or refactor patterns
 - [ ] Code actions to fix common readability and performance issues
 
-### 4. Performance and validation workflows
+#### External Tool Integration
 
-- [ ] Optional benchmarking mode to measure pattern execution cost
+- [ ] Expand the integration with external tools
+
+#### Reporting
+
 - [ ] Workspace-wide regex audit summaries and reports
 
-### 5. Platform and environment expansion
+#### Additional Languages, Editors & Tools
 
-- [ ] Additional language support using extensible grammar backends
-- [ ] Optional CLI tool for CI pipelines, audits and code review automation
+- [ ] Additional language support for commonly uses and requested languages
 - [ ] Reuse the Language Server in other editors (Neovim, JetBrains, etc.)
+- [ ] CLI tool for CI pipelines, audits and code review automation
+- [ ] Implement a [Custom Notebook Controller](https://code.visualstudio.com/api/extension-guides/notebook) to create a seamless workflow of working with regular expressions inside VS Code
 
 ## Contributing
 
-The documentation for contributing will be updated soon as part of the initial full release.
+See [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md) (WIP) for instructions on how to setup the project and start contributing.
 
 ## License
 

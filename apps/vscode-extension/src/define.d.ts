@@ -1,4 +1,3 @@
-
 /**
  * Build time constant to branch on 'development' and 'production' type builds.
  */

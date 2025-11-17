@@ -4,7 +4,7 @@
     "displayName": "Regex Radar Language Server Client",
     "publisher": "regex-radar",
     "description": "The Language Server Client for Regex Radar",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "type": "module",
     "exports": {
         ".": {

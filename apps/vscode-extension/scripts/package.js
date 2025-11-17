@@ -67,20 +67,18 @@ async function ensureWorkerFilesAreCopied() {
 }
 
 /**
- * @param {string} contents
+ * @param {import('../package.json') & { imports: Record<string, string>}} json
  */
-async function patchPackageJson(contents) {
+async function patchPackageJson(json) {
     console.log('patching package.json');
-    /**
-     * @type {import('../package.json') & { imports: Record<string, string>}}
-     */
-    const json = JSON.parse(contents);
-
     // patch `extension.js` to `extension.min.js`
     if (!json.main.endsWith('.min.js')) {
-        console.log(`  - main: .js -> .min.js`);
-        json.main = json.main.replace(/\.js$/, '.min.js');
+        const main = json.main;
+        const mainMin = json.main.replace(/\.js$/, '.min.js');
+        console.log(`  - main: '${main}' -> '${mainMin}'`);
+        json.main = mainMin;
     }
+    // create import mappings for the wasm and worker paths
     json['imports'] = {
         '#wasm/tree-sitter.wasm': './dist/wasm/tree-sitter.wasm',
         '#wasm/grammars/*.wasm': './dist/wasm/*.wasm',
@@ -91,55 +89,113 @@ async function patchPackageJson(contents) {
 }
 
 /**
- * Current contents
+ *
+ * @param {boolean} isPreRelease
  */
-let contents = '';
+async function packageVSIX(isPreRelease) {
+    console.log('invoking `vsce package`');
+    await createVSIX({
+        // NOTE: this directory has to exist, else it will write the .vsix file to the directory path as a file...
+        packagePath: distDirectoryPath,
+        // NOTE: because `vsce` is a buggy and undocumented mess, this has to be a relative path, but without using `./` or `../`
+        readmePath: 'dist/README.md',
+        preRelease: isPreRelease,
+    });
+}
 
 /**
- * A custom `vsce package` script, to support patching `package.json` manifest
+ * @template T
+ * @param {(contents: string) => Promise<T> | T} task
+ * @returns {Promise<T>}
+ */
+async function usingPackageJson(task) {
+    let didRestore = false;
+    const contents = await readFile(packageJsonPath, { encoding: 'utf-8' });
+
+    async function restore() {
+        if (!didRestore) {
+            console.log('restoring package.json...');
+            await writeFile(packageJsonPath, contents);
+            didRestore = true;
+            console.log('restored package.json');
+        }
+    }
+
+    // `vsce` might call `process.exit
+    process.on('beforeExit', restore);
+
+    try {
+        return await task(contents);
+    } finally {
+        restore();
+    }
+}
+
+/**
+ *
+ * @param {unknown} error
+ */
+function handleError(error) {
+    if (error instanceof Error) {
+        console.error(`name: `, error.name);
+        console.error(`message: `, error.message);
+        if ('code' in error) {
+            console.error('code: ', error['code']);
+        }
+        if (error.stack) {
+            console.error(`stack: `, error.stack);
+        }
+        if (error.cause) {
+            console.error(`cause: `, error.cause);
+        }
+    } else {
+        console.error(error);
+    }
+}
+
+/**
+ * @param {string} version
+ * @param {boolean} isPreRelease
+ */
+function validateVersion(version, isPreRelease) {
+    // VS Code does not allow anything other than `x.x.x`, check CONTRIBUTING.md for version management
+    if (!/0\.\d{1,2}\.\d{1,2}/.test(version)) {
+        throw new Error(`expected a version matching pattern '0.x.x', instead got '${version}'`);
+    }
+    const [_major, minor, _patch] = version.split('.').map((n) => Number(n));
+    // pre-release needs to be uneven, release even
+    const check = isPreRelease ? 1 : 0;
+    const matched = minor % 2 === check;
+    if (!matched) {
+        throw new Error(`--pre-release needs an uneven minor version, instead got 'x.${minor}.x'`);
+    }
+}
+
+/**
  * @param {string[]} args
  * @returns {Promise<number>}
  */
 async function main(...args) {
-    contents = await readFile(packageJsonPath, { encoding: 'utf-8' });
-    const isPreRelease = args.includes('--pre-release');
-    try {
-        await ensureReadmeIsCopied();
-        await ensureServerWasmFilesAreCopied();
-        await ensureWorkerFilesAreCopied();
-        await ensureServerModuleIsCopied();
-        await patchPackageJson(contents);
-        // package extension
-        console.log('invoking `vsce package`');
-        await createVSIX({
-            // NOTE: this directory has to exist, else it will write the .vsix file to the directory path as a file...
-            packagePath: distDirectoryPath,
-            // NOTE: because `vsce` is a buggy and undocumented mess, this has to be a relative path, but without using `./` or `../`
-            readmePath: 'dist/README.md',
-            preRelease: isPreRelease,
-        });
-    } catch (error) {
-        console.error(error);
-        return 1;
-    } finally {
-        // restore original contents
-        if (contents) {
-            await writeFile(packageJsonPath, contents);
-            // make sure beforeExit doesn't try to duplicate the restoration
-            contents = '';
+    return await usingPackageJson(async (contents) => {
+        const isPreRelease = args.includes('--pre-release');
+        try {
+            /**
+             * @type {import('../package.json')}
+             */
+            const json = JSON.parse(contents);
+            validateVersion(json.version, isPreRelease);
+            await ensureReadmeIsCopied();
+            await ensureServerWasmFilesAreCopied();
+            await ensureWorkerFilesAreCopied();
+            await ensureServerModuleIsCopied();
+            await patchPackageJson(json);
+            await packageVSIX(isPreRelease);
+        } catch (error) {
+            handleError(error);
+            return 1;
         }
-    }
-    return 0;
+        return 0;
+    });
 }
 
 main(...process.argv.slice(2)).then((code) => (process.exitCode = code));
-
-// createVSIX will exit the process if it fails to validate, which is suprising behaviour
-process.on('beforeExit', (code) => {
-    if (code === 1) {
-        if (contents) {
-            console.log('`vsce` tried to fatally crash our program, restoring package.json');
-            return writeFile(packageJsonPath, contents);
-        }
-    }
-});

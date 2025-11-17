@@ -4,7 +4,7 @@
     "displayName": "Regex Radar Tree Sitter parsers, grammars and queries",
     "publisher": "regex-radar",
     "description": "The Tree Sitter componentsd used by Regex Radar",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "type": "module",
     "exports": {
         ".": {

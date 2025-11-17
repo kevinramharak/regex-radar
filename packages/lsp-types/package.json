@@ -4,7 +4,7 @@
     "displayName": "Regex Radar Language Server Protocol types",
     "publisher": "regex-radar",
     "description": "The Language Server Protocol Types for Regex Radar",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "type": "module",
     "exports": {
         ".": {

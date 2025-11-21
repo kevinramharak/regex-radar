@@ -34,7 +34,7 @@
         "@eslint-community/regexpp": "^4.12.2",
         "@gitlab/needle": "^1.5.1",
         "@regex-radar/lsp-types": "*",
-        "@regex-radar/recheck-esm": "^4.5.0",
+        "@regex-radar/recheck-esm": "^4.5.4",
         "@regex-radar/tree-sitter": "*",
         "recheck": "^4.5.0",
         "vscode-languageserver": "^9.0.1",

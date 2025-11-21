@@ -44,14 +44,11 @@ export class RedosCheckService implements IRedosCheckService {
         } else {
             return {
                 sync: false,
-                /**
-                 * `recheck` should have its own queuing implementation, and uses threads in native binaries, test for what is optimal performance / speed tradeoff
-                 */
                 promise: this.getCheck().then(async (check) => {
                     const result = await this.logger.time(
                         `recheck for '/${param.pattern}/${param.flags}' took $durationms`,
-                        () => {
-                            return check(param.pattern, param.flags ?? '', {
+                        async () => {
+                            return await check(param.pattern, param.flags ?? '', {
                                 signal: token ? createAbortSignal(token) : token,
                             });
                         },
@@ -66,8 +63,8 @@ export class RedosCheckService implements IRedosCheckService {
     private checkFn: Promise<CheckFn> | undefined;
     private async getCheck(): Promise<CheckFn> {
         if (!this.checkFn) {
-            const workerPath = import.meta.resolve('#workers/recheck/thread.worker');
-            this.checkFn = createCheck(backend, workerPath);
+            const workerPath = import.meta.resolve('@regex-radar/recheck-esm/thread.wasm.worker.js');
+            this.checkFn = createCheck(backend, { workerPath });
         }
         return await this.checkFn;
     }

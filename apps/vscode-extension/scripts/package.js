@@ -1,6 +1,6 @@
 // @ts-check
 import * as path from 'node:path';
-import { readFile, writeFile, readdir, copyFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, readdir, copyFile, mkdir, cp } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 import { createVSIX } from '@vscode/vsce';
@@ -56,7 +56,7 @@ async function ensureServerWasmFilesAreCopied() {
     ]);
 }
 
-const workerPath = path.resolve(nodeModulesPath, '@local', 'recheck', 'lib', 'thread.worker.js');
+const workerPath = path.resolve(nodeModulesPath, '@regex-radar', 'recheck-esm', 'lib', 'thread.worker.js');
 const workerDestinationPath = path.resolve(distDirectoryPath, 'workers', 'recheck');
 
 async function ensureWorkerFilesAreCopied() {
@@ -66,8 +66,15 @@ async function ensureWorkerFilesAreCopied() {
     await copyFile(workerPath, path.join(workerDestinationPath, 'thread.worker.js'));
 }
 
+async function ensureDependenciesAreCopied() {
+    console.log('copying @regex-radar/recheck-scalajs');
+    const source = path.resolve(nodeModulesPath, '@regex-radar', 'recheck-scalajs')
+    const dest = path.resolve(distDirectoryPath, 'node_modules', '@regex-radar', 'recheck-scalajs');
+    await cp(source, dest, { recursive: true });
+}
+
 /**
- * @param {import('../package.json') & { imports: Record<string, string>}} json
+ * @param {import('../package.json') & Record<string, unknown>} json
  */
 async function patchPackageJson(json) {
     console.log('patching package.json');
@@ -79,6 +86,7 @@ async function patchPackageJson(json) {
         json.main = mainMin;
     }
     // create import mappings for the wasm and worker paths
+    // TODO: just copy these dependencies to dist/node_modules and drop the import maps
     json['imports'] = {
         '#wasm/tree-sitter.wasm': './dist/wasm/tree-sitter.wasm',
         '#wasm/grammars/*.wasm': './dist/wasm/*.wasm',
@@ -188,6 +196,7 @@ async function main(...args) {
             await ensureServerWasmFilesAreCopied();
             await ensureWorkerFilesAreCopied();
             await ensureServerModuleIsCopied();
+            await ensureDependenciesAreCopied();
             await patchPackageJson(json);
             await packageVSIX(isPreRelease);
         } catch (error) {

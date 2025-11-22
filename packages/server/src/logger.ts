@@ -10,6 +10,10 @@ export interface ILogger {
     info(message: string): void;
     warn(message: string): void;
     error(message: string): void;
+    /**
+     * Time the duration of the given `task`, and log the message to the given `logFn` defaulting to `debug.
+     * The message can use the `$duration` variable, which will be replaced with the duration in `ms`.
+     */
     time<R>(message: string, task: Task<R>, logFn?: LogFn): R | Promise<R>;
     thrown(thrown: unknown): void;
 }

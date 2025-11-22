@@ -3,7 +3,7 @@
     "description": "The test directory to test the Regex Radar extension",
     "private": true,
     "scripts": {
-        "vscode:install-extension": "code --install-extension ../apps/vscode-extension/dist/regex-radar-0.1.0.vsix",
+        "vscode:install-extension": "code --install-extension ../apps/vscode-extension/dist/regex-radar-*.vsix",
         "vscode:uninstall-extension": "code --uninstall-extension regex-radar.regex-radar"
     }
 }

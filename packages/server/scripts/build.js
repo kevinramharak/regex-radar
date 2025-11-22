@@ -9,10 +9,6 @@ const isWatch = process.argv.includes('--watch');
 async function main() {
     const ctx = await context({
         ...sharedOptions,
-        /**
-         * VS Code extensions are recommended to be bundled, Web version has to be a single file
-         * Other packages don't need to be
-         */
         bundle: true,
         banner: {
             js: banner,
@@ -20,11 +16,8 @@ async function main() {
         entryPoints: ['src/server.ts'],
         outfile: isProduction ? 'dist/server.min.js' : 'dist/server.js',
         platform: 'node',
-        define: {
-            // TODO: perf test this
-            'process.env.RECHECK_BACKEND': '"worker"',
-        },
         external: ['vscode'],
+        minifySyntax: true,
     });
     if (isWatch) {
         await ctx.watch();

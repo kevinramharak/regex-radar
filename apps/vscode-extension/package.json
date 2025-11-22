@@ -13,9 +13,7 @@
         "package": "node scripts/package.js",
         "publish": "node scripts/publish.js",
         "tsc": "tsc -b tsconfig.json",
-        "clean": "rm -r dist/",
-        "vscode:install-extension": "code --install-extension ./dist/regex-radar-*.vsix",
-        "vscode:uninstall-extension": "code --uninstall-extension regex-radar.regex-radar"
+        "clean": "rm -r dist/"
     },
     "devDependencies": {
         "@types/node": "^22.18.13",
@@ -26,11 +24,6 @@
     "dependencies": {
         "@regex-radar/client": "*",
         "vscode-languageclient": "^9.0.1"
-    },
-    "imports": {
-        "#wasm/tree-sitter.wasm": "./dist/wasm/tree-sitter.wasm",
-        "#wasm/grammars/*.wasm": "./dist/wasm/*.wasm",
-        "#workers/recheck/thread.worker": "./dist/workers/recheck/thread.worker.js"
     },
     "repository": {
         "type": "git",
@@ -58,6 +51,7 @@
         "dist/server.min.js",
         "dist/wasm/*.wasm",
         "dist/workers/recheck/*",
+        "dist/node_modules/**",
         "assets/icon.png",
         "LICENSE"
     ],

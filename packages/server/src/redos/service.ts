@@ -2,12 +2,8 @@ import type { CancellationToken } from 'vscode-languageserver';
 
 import { Injectable, createInterfaceId } from '@gitlab/needle';
 
-// TODO: fix these .d.ts files
-// @ts-expect-error - .d.ts file is missing
-import * as backend from '@local/recheck/core/backend/thread-worker';
-// @ts-expect-error - .d.ts file is missing
-import { createCheck } from '@local/recheck/core/builder';
-import { type Diagnostics as RecheckDiagnostics, type check } from 'recheck';
+import type { Diagnostics as RecheckDiagnostics } from '@regex-radar/recheck-esm';
+import { createCheck, threadWorker as backend, type CheckFn } from '@regex-radar/recheck-esm/core';
 
 import { ILogger } from '../logger';
 import { createAbortSignal } from '../util/abort-signal';
@@ -27,7 +23,6 @@ export interface IRedosCheckService {
 
 export const IRedosCheckService = createInterfaceId<IRedosCheckService>('IRedosCheckService');
 
-// TODO: runtime, scala jvm, scala.js, webworker?
 // TODO: event emitter, push diagnostics
 
 @Injectable(IRedosCheckService, [ILogger])
@@ -49,13 +44,15 @@ export class RedosCheckService implements IRedosCheckService {
         } else {
             return {
                 sync: false,
-                /**
-                 * `recheck` should have its own queuing implementation, and uses threads in native binaries, test for what is optimal performance / speed tradeoff
-                 */
                 promise: this.getCheck().then(async (check) => {
-                    const result = await check(param.pattern, param.flags ?? '', {
-                        signal: token ? createAbortSignal(token) : token,
-                    });
+                    const result = await this.logger.time(
+                        `recheck for '/${param.pattern}/${param.flags}' took $durationms`,
+                        async () => {
+                            return await check(param.pattern, param.flags ?? '', {
+                                signal: token ? createAbortSignal(token) : token,
+                            });
+                        },
+                    );
                     this.cache.set(`/${param.pattern}/${param.flags}`, result);
                     return result;
                 }),
@@ -63,11 +60,11 @@ export class RedosCheckService implements IRedosCheckService {
         }
     }
 
-    private checkFn: Promise<typeof check> | undefined;
-    private async getCheck(): Promise<typeof check> {
+    private checkFn: Promise<CheckFn> | undefined;
+    private async getCheck(): Promise<CheckFn> {
         if (!this.checkFn) {
-            const workerPath = import.meta.resolve('#workers/recheck/thread.worker');
-            this.checkFn = createCheck(backend, workerPath) as Promise<typeof check>;
+            const workerPath = import.meta.resolve('@regex-radar/recheck-esm/thread.wasm.worker.js');
+            this.checkFn = createCheck(backend, { workerPath });
         }
         return await this.checkFn;
     }

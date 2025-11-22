@@ -5,10 +5,10 @@ This directory contains documentation for the internal architecture of the Regex
 Regex Radar is built on top of the Language Server Protocol (LSP), with a strict separation between:
 
 - The **client extension** (VS Code)
-- The **language server** (discovery, analysis, diagnostics)
-- The **shared protocol** (custom requests, configuration, capabilities)
-
-Each subsystem has its own document. Only `diagnostics.md` exists today; the others serve asroadmaps for future documentation.
+- The **language client** (LSP Client)
+- The **language server** (LSP Server)
+- The **shared protocol** (custom requests, configuration, capabilities - build on top of LSP)
+- The **Regex Radar features** (linter, ReDoS check, analysis, diagnostics)
 
 ## Diagram
 

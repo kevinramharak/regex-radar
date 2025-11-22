@@ -9,7 +9,7 @@
     "imports": {
         "#wasm/tree-sitter.wasm": "web-tree-sitter/tree-sitter.wasm",
         "#wasm/grammars/*.wasm": "@regex-radar/tree-sitter/grammars/*.wasm",
-        "#workers/recheck/thread.worker": "@local/recheck/thread.worker.js"
+        "#workers/recheck/thread.worker": "@regex-radar/recheck-esm/thread.worker.js"
     },
     "exports": {
         ".": {
@@ -34,13 +34,13 @@
         "@eslint-community/regexpp": "^4.12.2",
         "@gitlab/needle": "^1.5.1",
         "@regex-radar/lsp-types": "*",
+        "@regex-radar/recheck-esm": "^4.5.7",
         "@regex-radar/tree-sitter": "*",
-        "recheck": "^4.5.0",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12",
         "vscode-uri": "^3.1.0"
     },
     "devDependencies": {
-        "esbuild": "^0.25.12"
+        "esbuild": "^0.27.0"
     }
 }
